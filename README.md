@@ -18,7 +18,19 @@ You can find a sample of Large Buildings dataset in `data_prep/sample`. Upload i
 
 Grab the latest set of OSM buildings with `data_prep/get_recent_osm_buildings.py`.
 
-... Addresses... [TODO]
+Import the shapefiles to PostgreSQL with `ogr2ogr`.
+
+```
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/Large_Buildings_2013.shp
+
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file//Culture_Venue.shp
+
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/Address.shp
+
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/County_Library.shp
+
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/College.shp
+```
 
 ### Geocode addresses
 
