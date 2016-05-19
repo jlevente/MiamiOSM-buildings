@@ -14,22 +14,30 @@ You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#i
 
 ### Get the data
 
-You can find a sample of Large Buildings dataset in `data_prep/sample`. Upload it to a PostgreSQL db with `data_prep/large_buildings_setup.py` [TODO].
-
 Grab the latest set of OSM buildings with `data_prep/get_recent_osm_buildings.py`.
 
-Import the shapefiles to PostgreSQL with `ogr2ogr`.
+Import the following shapefiles to PostgreSQL with `ogr2ogr`.
 
 ```
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/Large_Buildings_2013.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/Large_Buildings_2013.shp
 
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file//Culture_Venue.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file//Culture_Venue.shp
 
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/Address.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/Address.shp
 
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/County_Library.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/County_Library.shp
 
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -geomfield geom /path/to/file/College.shp
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/College.shp
+```
+
+Now, it's a good idea to create smaller subsets of the data for testing. Let's limit the area to Downtown and create some tables for the truncated data.
+Run the following query for each imported table (except for OSM buildings if you extracted them with `data_prep/get_recent_osm_buildings.py`).
+
+```sqlgeomfield
+create table large_buildings_test as (
+	select * from large_buildings_2013 where
+		ST_Intersects(geom, st_setsrid(st_makeenvelope(-80.200582, 25.770098, -80.185132, 25.780107), 4326))
+)
 ```
 
 ### Geocode addresses
