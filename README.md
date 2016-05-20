@@ -1,8 +1,12 @@
 # Miami-Dade County Large Building Import
 
+**The project is currently in the planning stage. Nothing is permanent yet.**
+
 Software tools and technical description of the Miami-Dade County Large Building Import process.
 
 More info on the [Wiki](http://wiki.openstreetmap.org/wiki/Miami-Dade_County_Large_Building_Import).
+
+The documentation is a mess. Well, it's not really a documentation yet but a collections of notes and ideas during the planning stage. Don't worry. It'll be nice and clean once we're done.
 
 ## Prerequisites 
 
