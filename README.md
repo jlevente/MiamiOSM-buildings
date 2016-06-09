@@ -20,6 +20,8 @@ You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#i
 
 - Grab the latest set of OSM buildings with `data_prep/get_recent_osm_buildings.py`.
 - Download Large Buildings 2013 dataset from Miami-Dade County: `http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
+- Addresses point file from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/128dcc2c4cac403dbd1d7440e10fa583_0
+
 Import the following shapefiles to PostgreSQL with `ogr2ogr`.
 
 ```
