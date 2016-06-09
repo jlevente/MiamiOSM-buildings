@@ -18,8 +18,8 @@ You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#i
 
 ### Get the data
 
-Grab the latest set of OSM buildings with `data_prep/get_recent_osm_buildings.py`.
-
+- Grab the latest set of OSM buildings with `data_prep/get_recent_osm_buildings.py`.
+- Download Large Buildings 2013 dataset from Miami-Dade County: `http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
 Import the following shapefiles to PostgreSQL with `ogr2ogr`.
 
 ```
@@ -43,6 +43,7 @@ create table large_buildings_test as (
 		ST_Intersects(geom, st_setsrid(st_makeenvelope(-80.200582, 25.770098, -80.185132, 25.780107), 4326))
 )
 ```
+### Check and Remove or Fix invalid geometries in both datasets using `ST_isValidReason()` and `ST_
 
 ### Geocode addresses
 
