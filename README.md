@@ -43,7 +43,9 @@ create table large_buildings_test as (
 		ST_Intersects(geom, st_setsrid(st_makeenvelope(-80.200582, 25.770098, -80.185132, 25.780107), 4326))
 )
 ```
-### Check and Remove or Fix invalid geometries in both datasets using `ST_isValidReason()` and `ST_
+### Check and Remove or Fix invalid geometries
+
+Check/repair both datasets using `ST_isValidReason()` and `ST_makeValid()`
 
 ### Geocode addresses
 
