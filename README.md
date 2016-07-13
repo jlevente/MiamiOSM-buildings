@@ -14,13 +14,19 @@ Install `PostgreSQL` with `PostGIS` on your system. You can find some help [here
 
 You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#install-from-package) python package.
 
+Install osmosis with `apt-get install osmosis` on Ubuntu/Debian (other platforms see http://wiki.openstreetmap.org/wiki/Osmosis/Installation).
+
 ## Data preparation
 
 ### Get the data
 
-- Grab the latest set of OSM buildings with `data_prep/get_recent_osm_buildings.py`.
-- Download Large Buildings 2013 dataset from Miami-Dade County: `http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
-- Addresses point file from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/128dcc2c4cac403dbd1d7440e10fa583_0
+- Create a PostgreSQL database called `osmbuildings_miami` then run `CREATE EXTENSION postgis;` and `CREATE EXTENSION hstore;`. We will store all data in this database.
+- Grab the latest set of OSM buildings with `data_prep/extract_existing_osm_data.sh`.
+- Download Large Buildings 2013 dataset from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
+- Download Addresses point file from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/128dcc2c4cac403dbd1d7440e10fa583_0
+- Cultural Venue: http://gis.mdc.opendata.arcgis.com/datasets/f32b5d1583864b058f25fbb34cb030a0_0
+- College: http://gis.mdc.opendata.arcgis.com/datasets/9137689caa404b59aea6b897dc6b997a_4
+- County Library: http://gis.mdc.opendata.arcgis.com/datasets/f0a2d7edc9374c6489bf0bf3367f606b_1
 
 Import the following shapefiles to PostgreSQL with `ogr2ogr`.
 
@@ -37,7 +43,7 @@ ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbnam
 ```
 
 Now, it's a good idea to create smaller subsets of the data for testing. Let's limit the area to Downtown and create some tables for the truncated data.
-Run the following query for each imported table (except for OSM buildings if you extracted them with `data_prep/get_recent_osm_buildings.py`).
+Run the following query for each imported table.
 
 ```sqlgeomfield
 create table large_buildings_test as (
