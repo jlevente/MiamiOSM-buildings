@@ -175,14 +175,14 @@ class DBHandler():
         ''')
         self.cursor.execute('update large_buildings_2013 set overlap = false where overlap is null')
         self.cursor.execute('''
-            insert into buildings_no_overlap (objectid, source, year_upd, height) (select objectid, source, year_upd, height
+            insert into buildings_no_overlap (objectid, source, year_upd, height, geom) (select objectid, source, year_upd, height, geom
             from
                 large_buildings_2013
             where
                 overlap is false)
         ''')
         self.cursor.execute('''
-            insert into buildings_overlap (objectid, source, year_upd, height) (select objectid, source, year_upd, height
+            insert into buildings_overlap (objectid, source, year_upd, height, geom) (select objectid, source, year_upd, height, geom
             from
                 large_buildings_2013
             where
@@ -195,16 +195,12 @@ class DBHandler():
         sql = '''
             update buildings_no_overlap
             set
-                objectid = x.building_id,
-                source = x.source,
-                year_upd = x.year_upd,
-                height = x.height
                 zip = x.zip,
                 city = x.mailing_mu,
                 street = x.sname,
                 house_num = x.hse_num
             from (
-                select b.objectid as building_id, b.source, b.height, b.year_upd, a.hse_num, a.sname, a.mailing_mu, a.zip, num_address.count as count_addresses
+                select b.objectid as building_id, a.hse_num, a.sname, a.mailing_mu, a.zip, num_address.count as count_addresses
                 from
                     large_buildings_2013 b,
                     address a,
