@@ -8,10 +8,10 @@ class OSMHandler():
         if bbox is not None:
             self.bbox = bbox
         else:
-            # Extent of Large Building Footprints dataset
-            self.bbox = '25.23561, -80.87864, 25.97467, -80.11845'
             # Downtown MIA
             self.bbox = '25.770098, -80.200582,25.780107,-80.185132'
+            # Extent of Large Building Footprints dataset
+            self.bbox = '25.23561, -80.87864, 25.97467, -80.11845'
 
     def query_buildings(self):
         postdata = '''
