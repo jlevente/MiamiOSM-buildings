@@ -59,7 +59,7 @@ class DBHandler():
         self.cursor.execute(create_address_table_sql)
         self.connection.commit()
 
-    def upload_address(data):
+    def upload_address(self, data):
         sql = 'INSERT INTO osm_addresses (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for poi in data['elements']:
     #        print building
@@ -68,7 +68,7 @@ class DBHandler():
                 self.cursor.execute(sql, (poi['id'], poi['type'], poi['tags'], 'POINT (' + str(poi['lon']) + ' ' + str(poi['lat']) + ')'))
         self.conn.commit()
 
-    def upload_buildings(data):
+    def upload_buildings(self, data):
         with_no_geom = 0
         sql = 'INSERT INTO osm_buildings_relations (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for building in data['elements']:
@@ -122,7 +122,7 @@ class DBHandler():
         self.conn.commit()
         print '%s ways without "geometry" block' % with_no_geom
 
-    def build_wkt_coord_list(geometry):
+    def build_wkt_coord_list(self, geometry):
         i = 0
         coord_list = ''
         for node in geometry:
@@ -131,3 +131,11 @@ class DBHandler():
             coord_list += str(node['lon']) + ' ' + str(node['lat'])
             i += 1
         return coord_list
+
+    def fix_invalid_geom(self):
+        sql = '''
+            UPDATE large_buildings_2013 set geom = st_makevalid(geom)
+            WHERE st_isvalid(geom) is false;
+        '''
+        self.cursor.execute(sql)
+        self.conn.commit()
