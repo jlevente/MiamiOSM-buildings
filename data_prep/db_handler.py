@@ -54,9 +54,36 @@ class DBHandler():
             );
             SELECT AddGeometryColumn('osm_addresses', 'geom', 4326, 'POINT', 2);
         '''
+        create_no_overlap_table_sql = '''
+            CREATE TABLE IF NOT EXISTS buildings_no_overlap (
+                objectid int PRIMARY KEY,
+                source varchar,
+                year_upd varchar,
+                height float,
+                zip float,
+                city varchar,
+                street varchar,
+                house_num varchar
+            );
+            SELECT AddGeometryColumn('buildings_no_overlap','geom', 4326, 'GEOMETRY', 2);
+        '''
+        create_overlap_table_sql = '''
+            CREATE TABLE IF NOT EXISTS buildings_overlap (
+                objectid int PRIMARY KEY,
+                source varchar,
+                year_upd varchar,
+                height float,
+                zip float,
+                city varchar,
+                street varchar,
+                house_num varchar
+            );
+            SELECT AddGeometryColumn('buildings_overlap','geom', 4326, 'GEOMETRY', 2);
+        '''
         self.cursor.execute(create_extension_sql)
         self.cursor.execute(create_builing_table_sql)
         self.cursor.execute(create_address_table_sql)
+        self.cursor.execute('alter table large_buildings_2013 add column overlap boolean')
         self.connection.commit()
 
     def upload_address(self, data):
@@ -136,6 +163,68 @@ class DBHandler():
         sql = '''
             UPDATE large_buildings_2013 set geom = st_makevalid(geom)
             WHERE st_isvalid(geom) is false;
+        '''
+        self.cursor.execute(sql)
+        self.conn.commit()
+
+    def do_intersection(self):
+        self.cursor.execute('''
+            update large_buildings_2013 b set overlap = true
+            from osm_buildings_relations o
+            where st_intersects(b.geom, o.geom)
+        ''')
+        self.cursor.execute('update large_buildings_2013 set overlap = false where overlap is null')
+        self.cursor.execute('''
+            insert into buildings_no_overlap (objectid, source, year_upd, height) (select objectid, source, year_upd, height
+            from
+                large_buildings_2013
+            where
+                overlap is false)
+        ''')
+        self.cursor.execute('''
+            insert into buildings_overlap (objectid, source, year_upd, height) (select objectid, source, year_upd, height
+            from
+                large_buildings_2013
+            where
+                overlap is true)
+        ''')
+        self.conn.commit()
+
+
+    def update_address(self):
+        sql = '''
+            update buildings_no_overlap
+            set
+                objectid = x.building_id,
+                source = x.source,
+                year_upd = x.year_upd,
+                height = x.height
+                zip = x.zip,
+                city = x.mailing_mu,
+                street = x.sname,
+                house_num = x.hse_num
+            from (
+                select b.objectid as building_id, b.source, b.height, b.year_upd, a.hse_num, a.sname, a.mailing_mu, a.zip, num_address.count as count_addresses
+                from
+                    large_buildings_2013 b,
+                    address a,
+                    -- Get number of addresses within each large building
+                    (select building.objectid as building_id, count(a.objectid) 
+                    from 
+                        large_buildings_2013 building,
+                        address a
+                    where
+                        building.geom && a.geom and
+                        st_within(a.geom, building.geom)
+                    group by building_id) num_address
+                where
+                    b.objectid = num_address.building_id and
+                    num_address.count = 1 and
+                    b.geom && a.geom and
+                    st_within(a.geom, b.geom)
+            ) x
+            where
+                buildings_no_overlap.objectid = x.building_id
         '''
         self.cursor.execute(sql)
         self.conn.commit()

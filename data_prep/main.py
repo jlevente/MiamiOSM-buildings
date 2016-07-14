@@ -12,6 +12,8 @@ def get_args():
     p.add_argument('-b', '--bbox', help='BBOX for OSM download (min_lat, min_long, max_lat, max_long). Whole extent of Large buildings is used if left empty')
     p.add_argument('-f', '--fix', help='Fix PostGIS geometry errors', action='store_true')
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
+    p.add_argument('-i', '--intersect', help='Performs intersection of Large Buildings and OSM buildings.')
+    p.add_argument('-a', '--assign_address', help='Assigns an address to buildings with only 1 overlapping address point.')
     return p.parse_args()
 
 if __name__ == "__main__":
@@ -19,6 +21,9 @@ if __name__ == "__main__":
     create = args["instagram"]
     building_download = args["building_download"]
     address_download = args["address_download"]
+    fix = args["fix"]
+    intersect = args["intersect"]
+    address = args["assign_address"]
     bbox = args["bbox"]
 
     db = DBHandler(dsn)
@@ -37,5 +42,11 @@ if __name__ == "__main__":
 
     if fix:
        db.fix_invalid_geom()
+
+    if intersect:
+       db.do_intersection()
+
+    if address:
+       db.update_address()
 
     db.close_db_conn()
