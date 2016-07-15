@@ -6,7 +6,7 @@ from osm_handler import OSMHandler
 def get_args():
     import argparse
     p = argparse.ArgumentParser(description="Data preparation for Miami's OSM Building import")
-    p.add_argument('-c', '--create', help='Create Postgres tables', action='store_true')
+    p.add_argument('-setup', '--setup', help='Set up Postgres DB.', action='store_true')
     p.add_argument('-bd', '--buildings_download', help='Download Buildings from OSM', action='store_true')
     p.add_argument('-ad', '--address_download', help='Download Addresses from OSM', action='store_true')
     p.add_argument('-b', '--bbox', help='BBOX for OSM download (min_lat, min_long, max_lat, max_long). Whole extent of Large buildings is used if left empty')
@@ -18,7 +18,7 @@ def get_args():
 
 if __name__ == "__main__":
     args = vars(get_args())
-    create = args["instagram"]
+    setup = args["setup"]
     building_download = args["building_download"]
     address_download = args["address_download"]
     fix = args["fix"]
