@@ -21,7 +21,7 @@ Install osmosis with `apt-get install osmosis` on Ubuntu/Debian (other platforms
 ### Get the data
 
 - Create a PostgreSQL database called `osmbuildings_miami` then run `CREATE EXTENSION postgis;` and `CREATE EXTENSION hstore;`. We will store all data in this database.
-- Grab the latest set of OSM buildings with `data_prep/extract_existing_osm_data.sh`.
+- Grab the latest set of OSM buildings with `data_prep/main.py` (doc to come).
 - Download Large Buildings 2013 dataset from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
 - Download Addresses point file from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/128dcc2c4cac403dbd1d7440e10fa583_0
 - Cultural Venue: http://gis.mdc.opendata.arcgis.com/datasets/f32b5d1583864b058f25fbb34cb030a0_0
