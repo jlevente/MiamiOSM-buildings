@@ -3,7 +3,7 @@ import json
 
 class OSMHandler():
     def __init__(self):
-        overpassAPI = 'http://overpass-api.de/api/interpreter'
+        self.overpassAPI = 'http://overpass-api.de/api/interpreter'
 
         if bbox is not None:
             self.bbox = bbox
@@ -26,7 +26,7 @@ class OSMHandler():
             >;
             '''
 
-        data = requests.post(overpassAPI, postdata % (self.bbox))
+        data = requests.post(self.overpassAPI, postdata % (self.bbox))
         data = json.loads(data.text)
         return data
 
