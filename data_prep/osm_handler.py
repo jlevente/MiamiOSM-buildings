@@ -22,7 +22,6 @@ class OSMHandler():
               way["building"];
             );
             out geom;
-            out meta;
             >;
             '''
 
@@ -37,7 +36,6 @@ class OSMHandler():
           node["addr:housenumber"];
         );
         out geom;
-        out meta;
         >;
         '''
 
