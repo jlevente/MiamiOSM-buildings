@@ -85,6 +85,8 @@ class DBHandler():
         self.cursor.execute(create_extension_sql)
         self.cursor.execute(create_building_table_sql)
         self.cursor.execute(create_address_table_sql)
+        self.cursor.execute(create_no_overlap_table_sql)
+        self.cursor.execute(create_overlap_table_sql)
         self.conn.commit()
 
     def upload_address(self, data):
