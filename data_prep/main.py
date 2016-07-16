@@ -12,6 +12,8 @@ def get_args():
     p.add_argument('-f', '--fix', help='Fix PostGIS geometry errors', action='store_true')
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
     p.add_argument('-i', '--intersect', help='Performs intersection of Large Buildings and OSM buildings.', action="store_true")
+    p.add_argument('-v', '--vacuum', help='Vacuums Postgres DB.', action="store_true")
+    p.add_argument('-idx', '--index_data', help='Creates indexes on several tables.', action="store_true")
     p.add_argument('-a', '--assign_address', help='Assigns an address to buildings with only 1 overlapping address point.', action="store_true")
     return p.parse_args()
 
@@ -24,6 +26,8 @@ if __name__ == "__main__":
     dsn = args["dsn"]
     intersect = args["intersect"]
     address = args["assign_address"]
+    vacuum = args["vacuum"]
+    index = args["index_data"]
     bbox = args["bbox"]
 
     db = DBHandler(dsn)
@@ -48,6 +52,14 @@ if __name__ == "__main__":
     if fix:
         print 'Fixing geometry errors in Large Buildings dataset.'
         db.fix_invalid_geom()
+
+    if vacuum:
+        print 'Updating DB stats.'
+        db.update_stats()
+
+    if index:
+        print 'Creating multiple indexes.'
+        db.create_index()
 
     if intersect:
         print 'Intersecting OSM buildings with Large buildings. Populating tables for overlapping and non-overlapping buildings.'

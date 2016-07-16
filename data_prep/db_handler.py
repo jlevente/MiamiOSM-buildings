@@ -47,6 +47,7 @@ class DBHandler():
             );
         -- Use generic GEOMETRY type so we can store nodes and ways together
             SELECT AddGeometryColumn('osm_buildings', 'geom', 4326, 'GEOMETRY', 2);
+            ALTER TABLE osm_buildings ADD PRIMARY KEY (id, type);
         '''
         create_address_table_sql = '''
             CREATE TABLE IF NOT EXISTS osm_addresses (
@@ -55,6 +56,7 @@ class DBHandler():
                 tags hstore
             );
             SELECT AddGeometryColumn('osm_addresses', 'geom', 4326, 'POINT', 2);
+            ALTER TABLE osm_addresses ADD PRIMARY KEY (id, type);
         '''
         create_no_overlap_table_sql = '''
             CREATE TABLE IF NOT EXISTS buildings_no_overlap (
@@ -82,12 +84,23 @@ class DBHandler():
             );
             SELECT AddGeometryColumn('buildings_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
+        populate_geom_sql = 'select Populate_Geometry_Columns();'
         self.cursor.execute(create_extension_sql)
         self.cursor.execute(create_building_table_sql)
         self.cursor.execute(create_address_table_sql)
         self.cursor.execute(create_no_overlap_table_sql)
         self.cursor.execute(create_overlap_table_sql)
+        self.cursor.execute(populate_geom_sql)
         self.conn.commit()
+
+    def create_index(self):
+        building_index_sql = 'CREATE INDEX osm_building_geom_idx ON osm_buildings USING GIST (geom);'
+        address_index_sql = 'CREATE INDEX osm_address_geom_idx ON osm_address USING GIST (geom);'
+        self.cursor.execute(buildings_index_sql)
+        self.cursor.execute(address_index_sql)
+
+    def update_stats(self):
+        self.cursor.execute('VACUUM ANALYZE;')
 
     def upload_address(self, data):
         sql = 'INSERT INTO osm_addresses (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
