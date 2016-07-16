@@ -85,7 +85,6 @@ class DBHandler():
         self.cursor.execute(create_extension_sql)
         self.cursor.execute(create_building_table_sql)
         self.cursor.execute(create_address_table_sql)
-        self.cursor.execute('alter table large_buildings_2013 add column overlap boolean')
         self.conn.commit()
 
     def upload_address(self, data):
@@ -102,7 +101,7 @@ class DBHandler():
         sql = 'INSERT INTO osm_buildings (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for building in data['elements']:
     #        print building
-            print building['type'],  building['id']
+    #        print building['type'],  building['id']
             if building['type'] == 'node':
                 self.cursor.execute(sql, (building['id'], building['type'], building['tags'], 'POINT (' + str(building['lon']) + ' ' + str(building['lat']) + ')'))
             # Upload them as Linestring 
@@ -170,6 +169,8 @@ class DBHandler():
         self.conn.commit()
 
     def do_intersection(self):
+        self.cursor.execute('alter table large_buildings_2013 drop column if exists overlap;')
+        self.cursor.execute('alter table large_buildings_2013 add column overlap boolean;')
         self.cursor.execute('''
             update large_buildings_2013 b set overlap = true
             from osm_buildings o
