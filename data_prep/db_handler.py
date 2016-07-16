@@ -8,8 +8,8 @@ class DBHandler():
         pg_host = 'localhost'
         pg_port = 5432
         pg_user = 'postgres'
-        pg_password = 'postgres'
-        dbname = 'osmbuildings_miami'
+        pg_pass = 'postgres'
+        pg_db = 'osmbuildings_miami'
 
         # Extent of Large Building Footprints dataset
         self.bbox = '25.23561, -80.87864, 25.97467, -80.11845'
@@ -25,8 +25,10 @@ class DBHandler():
                     user=pg_user,
                     password=pg_pass,
                     dbname=pg_db)
-
-        psycopg2.extras.register_hstore(conn)
+        try:
+            psycopg2.extras.register_hstore(self.conn)
+        except:
+            print 'Could not register hstore. Are you running it for the first time? Should be OK next time.'
         self.cursor = self.conn.cursor()
 
     def close_db_conn(self):
@@ -38,7 +40,7 @@ class DBHandler():
             CREATE EXTENSION IF NOT EXISTS hstore;
         '''
         create_building_table_sql = '''
-            CREATE TABLE osm_buildings (
+            CREATE TABLE IF NOT EXISTS osm_buildings (
                 id bigint,
                 type varchar,
                 tags hstore
@@ -47,7 +49,7 @@ class DBHandler():
             SELECT AddGeometryColumn('osm_buildings', 'geom', 4326, 'GEOMETRY', 2);
         '''
         create_address_table_sql = '''
-            CREATE TABLE osm_addresses (
+            CREATE TABLE IF NOT EXISTS osm_addresses (
                 id bigint,
                 type varchar,
                 tags hstore
@@ -81,10 +83,10 @@ class DBHandler():
             SELECT AddGeometryColumn('buildings_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
         self.cursor.execute(create_extension_sql)
-        self.cursor.execute(create_builing_table_sql)
+        self.cursor.execute(create_building_table_sql)
         self.cursor.execute(create_address_table_sql)
         self.cursor.execute('alter table large_buildings_2013 add column overlap boolean')
-        self.connection.commit()
+        self.conn.commit()
 
     def upload_address(self, data):
         sql = 'INSERT INTO osm_addresses (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
@@ -97,7 +99,7 @@ class DBHandler():
 
     def upload_buildings(self, data):
         with_no_geom = 0
-        sql = 'INSERT INTO osm_buildings_relations (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
+        sql = 'INSERT INTO osm_buildings (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for building in data['elements']:
     #        print building
             print building['type'],  building['id']
@@ -170,7 +172,7 @@ class DBHandler():
     def do_intersection(self):
         self.cursor.execute('''
             update large_buildings_2013 b set overlap = true
-            from osm_buildings_relations o
+            from osm_buildings o
             where st_intersects(b.geom, o.geom)
         ''')
         self.cursor.execute('update large_buildings_2013 set overlap = false where overlap is null')

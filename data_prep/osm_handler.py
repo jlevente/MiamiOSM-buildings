@@ -2,7 +2,7 @@ import requests
 import json
 
 class OSMHandler():
-    def __init__(self):
+    def __init__(self, bbox):
         self.overpassAPI = 'http://overpass-api.de/api/interpreter'
 
         if bbox is not None:

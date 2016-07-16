@@ -1,4 +1,3 @@
-import params
 import sys
 from db_handler import DBHandler
 from osm_handler import OSMHandler
@@ -19,9 +18,10 @@ def get_args():
 if __name__ == "__main__":
     args = vars(get_args())
     setup = args["setup"]
-    building_download = args["building_download"]
+    building_download = args["buildings_download"]
     address_download = args["address_download"]
     fix = args["fix"]
+    dsn = args["dsn"]
     intersect = args["intersect"]
     address = args["assign_address"]
     bbox = args["bbox"]
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     db = DBHandler(dsn)
     osm = OSMHandler(bbox)
 
-    if create:
+    if setup:
         db.setup_db()
 
     if building_download:
