@@ -12,7 +12,7 @@ def get_args():
     p.add_argument('-f', '--fix', help='Fix PostGIS geometry errors', action='store_true')
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
     p.add_argument('-i', '--intersect', help='Performs intersection of Large Buildings and OSM buildings.', action="store_true")
-    p.add_argument('-a', '--assign_address', help='Assigns an address to buildings with only 1 overlapping address point.')
+    p.add_argument('-a', '--assign_address', help='Assigns an address to buildings with only 1 overlapping address point.', action="store_true")
     return p.parse_args()
 
 if __name__ == "__main__":
