@@ -24,12 +24,11 @@ class OSMHandler():
             out geom;
             >;
             '''
-
         data = requests.post(self.overpassAPI, postdata % (self.bbox))
         data = json.loads(data.text)
         return data
 
-    def query_address():
+    def query_address(self):
         postdata = '''
         [out:json][bbox:%s][timeout:120];
         (
@@ -38,8 +37,7 @@ class OSMHandler():
         out geom;
         >;
         '''
-
-        data = requests.post(overpassAPI, postdata % (self.bbox))
+        data = requests.post(self.overpassAPI, postdata % (self.bbox))
         data = json.loads(data.text)
         return data
 

@@ -92,7 +92,7 @@ class DBHandler():
         sql = 'INSERT INTO osm_addresses (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for poi in data['elements']:
     #        print building
-            print poi['type'],  poi['id']
+    #        print poi['type'],  poi['id']
             if poi['type'] == 'node':
                 self.cursor.execute(sql, (poi['id'], poi['type'], poi['tags'], 'POINT (' + str(poi['lon']) + ' ' + str(poi['lat']) + ')'))
         self.conn.commit()

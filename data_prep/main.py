@@ -30,23 +30,32 @@ if __name__ == "__main__":
     osm = OSMHandler(bbox)
 
     if setup:
+        print 'Setting up the database.'
         db.setup_db()
 
     if building_download:
+        print 'Querying OverpassAPI for buildings.'
         buildings = osm.query_buildings()
-        db.upload_buildings()
+        print 'Uploading OSM buildings to Postgres...'
+        db.upload_buildings(buildings)
 
     if address_download:
+        print 'Querying OverpassAPI for addresses.'
         addresses = osm.query_address()
-        db.upload_address()
+        print 'Uploading OSM addresses to Postgres'
+        db.upload_address(addresses)
 
     if fix:
-       db.fix_invalid_geom()
+        print 'Fixing geometry errors in Large Buildings dataset.'
+        db.fix_invalid_geom()
 
     if intersect:
-       db.do_intersection()
+        print 'Intersecting OSM buildings with Large buildings. Populating tables for overlapping and non-overlapping buildings.'
+        db.do_intersection()
 
     if address:
-       db.update_address()
+        print 'Assigning addresses to buildings.'
+        db.update_address()
 
+    print 'Closing DB connection.'
     db.close_db_conn()
