@@ -108,18 +108,27 @@ class DBHandler():
     def create_index(self):
         building_index_sql = 'CREATE INDEX osm_building_geom_idx ON osm_buildings USING GIST (geom);'
         address_index_sql = 'CREATE INDEX osm_address_geom_idx ON osm_addresses USING GIST (geom);'
-        highway_index_sql = 'CREATE INDEX osm_highway_railway_idx ON osm_highway_railway USING GIST (geom);'
-        self.cursor.execute(buildings_index_sql)
+        highway_index_sql = 'CREATE INDEX osm_highway_railway_geom_idx ON osm_highway_railway USING GIST (geom);'
+        self.cursor.execute(building_index_sql)
         self.cursor.execute(address_index_sql)
+        self.cursor.execute(highway_index_sql)
+        self.conn.commit()
 
     def update_stats(self):
-        self.cursor.execute('VACUUM ANALYZE;')
+        old_isolation_level = self.conn.isolation_level
+        self.conn.set_isolation_level(0)
+        self.cursor.execute('VACUUM ANALYZE')
+        self.conn.set_isolation_level(old_isolation_level)
+        self.conn.commit()
 
     def upload_osm(self, data, table):
-        with_no_geom = 0
+        i = 0
         sql_pre = 'INSERT INTO %s ' % table
         sql =  sql_pre + '(id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for el in data['elements']:
+            if i % 10000 == 0:
+                print '%s: %s/%s' % (table, i, len(data['elements']))
+            i += 1
     #        print building
     #        print el['type'],  el['id']
             if el['type'] == 'node':
@@ -296,7 +305,7 @@ class DBHandler():
         Total # of buildings:                       %s
         Buildings to upload in bulk process:        %s
         Buildings in bulk process with address:     %s
-        Buildings for manual inspection:            $s
+        Buildings for manual inspection:            %s
         ----------------------------------------------
         '''
         print text % (large_buildings, buildings_no_overlap, assigned_address, buildings_overlap)
