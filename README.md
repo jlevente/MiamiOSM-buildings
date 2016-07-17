@@ -14,33 +14,68 @@ Install `PostgreSQL` with `PostGIS` on your system. You can find some help [here
 
 You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#install-from-package) python package.
 
-Install osmosis with `apt-get install osmosis` on Ubuntu/Debian (other platforms see http://wiki.openstreetmap.org/wiki/Osmosis/Installation).
+~~Install osmosis with `apt-get install osmosis` on Ubuntu/Debian (other platforms see http://wiki.openstreetmap.org/wiki/Osmosis/Installation).~~
 
-## Data preparation
+Install `GDAL/OGR` for your system. Used for importing shapefiles to Postgres with `ogr2ogr`.
+
+## Data preparation [Under Construction]
+
+1. Create a PostgreSQL database called osmbuildings_miami (make sure user 'postgres' with the password 'postgres' has access to it). I might make this more flexible later because right now this is kind of hardcoded into the source
+2. Set up the DB (extensions, tables)
+```
+python data_prep/main.py --setup
+```
 
 ### Get the data
 
-- Create a PostgreSQL database called `osmbuildings_miami` then run `CREATE EXTENSION postgis;` and `CREATE EXTENSION hstore;`. We will store all data in this database.
-- Grab the latest set of OSM buildings with `data_prep/main.py` (doc to come).
-- Download Large Buildings 2013 dataset from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
-- Download Addresses point file from Miami-Dade County: http://gis.mdc.opendata.arcgis.com/datasets/128dcc2c4cac403dbd1d7440e10fa583_0
-- Cultural Venue: http://gis.mdc.opendata.arcgis.com/datasets/f32b5d1583864b058f25fbb34cb030a0_0
-- College: http://gis.mdc.opendata.arcgis.com/datasets/9137689caa404b59aea6b897dc6b997a_4
-- County Library: http://gis.mdc.opendata.arcgis.com/datasets/f0a2d7edc9374c6489bf0bf3367f606b_1
-
-Import the following shapefiles to PostgreSQL with `ogr2ogr`.
-
+3. Import shapefiles to db. (I store the shapefiles in the data folder. pass it as the first argument)
 ```
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/Large_Buildings_2013.shp
-
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file//Culture_Venue.shp
-
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/Address.shp
-
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/County_Library.shp
-
-ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom /path/to/file/College.shp
+./data_prep/import_shapefiles.sh data
 ```
+4. Grab buildings from OverpassAPI (store them in osm_buildings table)
+```
+python data_prep/main.py --buildings_download
+```
+5. Grab Addresses from OverpassAPI (osm_addresses table)
+```
+python data_prep/main.py --address_download
+```
+6. Grab highways/railways from OverpassAPI (osm_highway_railway)
+```
+python data_prem/main.py --roads_download
+```
+7. Add indexes:
+```
+python data_prep/main.py --index_data
+```
+8. Update db statistics:
+```
+python data_prep/main.py --vacuum
+```
+9. Fix some geometry errors in Large Buildings
+ ```
+ python data_prep/main.py --fix
+ ```
+10. Spatial intersection between Large Buildings and osm_buildings. Will result in 2 tables - buildings_no_overlap (for the bulk process) and buildings_overlap (for manually merging them with OSM)
+```
+python data_prep/main.py --intersect
+```
+11. Assign address to 'buildings_no_overlap' where there's 1-1 building-address relation
+```
+python data_prep/main.py --assign_address
+```
+12. Check if buildings are near existing OSM addresses. Move those that are closer than 30m to manual bucket.
+```
+python data_prep/main.py --check_address.
+```
+13. Check if buildings overlap with OSM roads/rail tracks. Move overlapping ones to manual bucket.
+```
+python data_prep/main.py --check_road_rail
+```
+
+You should have 2 tables: `buildings_no_overlap` for the bulk process (i.e. buildings not interfering with existing OSM data) and `buildings_overlap` for the manual process (i.e. buildings that need manual inspection).
+
+...
 
 Now, it's a good idea to create smaller subsets of the data for testing. Let's limit the area to Downtown and create some tables for the truncated data.
 Run the following query for each imported table.
