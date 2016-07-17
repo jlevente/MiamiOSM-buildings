@@ -261,7 +261,7 @@ class DBHandler():
             self.cursor.execute('''
                 select array_agg(b.objectid) from buildings_no_overlap b, osm_addresses a
                 where
-                    a.geom && a.geom and st_intersects(b.geom, a.geom) and
+                    a.geom && b.geom and st_intersects(b.geom, a.geom) and
                     -- 30 m seems feasible. just to be safe
                     st_dwithin(b.geom::geography, a.geom::geography, 30)''')
         elif move_type == 'road/rail':
@@ -284,8 +284,9 @@ class DBHandler():
             where b.objectid IN %s)
         '''
         self.cursor.execute(insert_sql, (ids_to_move, ))
+        self.conn.commit()
         # Remove buildings from bulk table
-        self.cursor.execute('DELETE FROM buildings_overlap where objectid in %s;', (ids_to_move, ))
+        self.cursor.execute('DELETE FROM buildings_no_overlap where objectid in %s;', (ids_to_move, ))
         print 'Moved %s buildings to manual bucket.' % len(ids_to_move)
         self.conn.commit()
 
