@@ -212,7 +212,6 @@ class DBHandler():
         ''')
         self.conn.commit()
 
-
     def update_address(self):
         sql = '''
             update buildings_no_overlap
@@ -245,4 +244,38 @@ class DBHandler():
                 buildings_no_overlap.objectid = x.building_id
         '''
         self.cursor.execute(sql)
+        self.conn.commit()
+
+    def check_and_move(self, move_type):
+        if move_type == 'address':
+            # Get a list of IDs of buildings close to OSM addresses
+            self.cursor.execute('''
+                select array_agg(b.objectid) from buildings_no_overlap b, osm_addresses a
+                where
+                    a.geom && a.geom and st_intersects(b.geom, a.geom) and
+                    -- 30 m seems feasible. just to be safe
+                    st_dwithin(b.geom::geography, a.geom::geography, 30)''')
+        elif move_type == 'road/rail':
+            self.cursor.execute('''
+                select array_agg(b.objectid) from buildings_no_overlap b, osm_highway_railway r
+                where
+                    b.geom && r.geom and st_intersects(b.geom, r.geom) and (
+                    (not (exist(tags, 'highway') and tags->'highway' = 'abandoned')) and
+                    (not (exist(tags,'railway') and tags->'railway' = 'abandoned')) and
+                    not exist(tags, 'abandoned:highway') and
+                    not exist(tags, 'abandoned:railway'));''')
+        else:
+            print 'Wrong move_type.'
+            return
+        ids_to_move = tuple(self.cursor.fetchone()[0])
+        # Move those buildings to the manual bucket
+        insert_sql = '''
+            INSERT INTO buildings_overlap (objectid, source, year_upd, height, zip, city, street, house_num, geom) 
+            (select objectid, source, year_upd, height, zip, city, street, house_num, geom from buildings_no_overlap b
+            where b.objectid IN %s)
+        '''
+        self.cursor.execute(insert_sql, (ids_to_move, ))
+        # Remove buildings from bulk table
+        self.cursor.execute('DELETE FROM buildings_overlap where objectid in %s;', (ids_to_move, ))
+        print 'Moved %s buildings to manual bucket.' % len(ids_to_move)
         self.conn.commit()

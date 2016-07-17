@@ -14,6 +14,8 @@ def get_args():
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
     p.add_argument('-i', '--intersect', help='Performs intersection of Large Buildings and OSM buildings.', action="store_true")
     p.add_argument('-v', '--vacuum', help='Vacuums Postgres DB.', action="store_true")
+    p.add_argument('-ca', '--check_address', help='Checks whether buildings to upload overlap with existing OSM addresses.', action="store_true")
+    p.add_argument('-crr', '--check_road_rail', help='Checks whether buildings to upload overlap with OSM highway=* or railway=*.', action="store_true")
     p.add_argument('-idx', '--index_data', help='Creates indexes on several tables.', action="store_true")
     p.add_argument('-a', '--assign_address', help='Assigns an address to buildings with only 1 overlapping address point.', action="store_true")
     return p.parse_args()
@@ -28,6 +30,8 @@ if __name__ == "__main__":
     dsn = args["dsn"]
     intersect = args["intersect"]
     address = args["assign_address"]
+    check_address = args["check_address"]
+    check_road_rail = args["check_road_rail"]
     vacuum = args["vacuum"]
     index = args["index_data"]
     bbox = args["bbox"]
@@ -76,6 +80,14 @@ if __name__ == "__main__":
     if address:
         print 'Assigning addresses to buildings.'
         db.update_address()
+
+    if check_address:
+        print 'Checking OSM addresses in the proximity of buildings.'
+        db.check_and_move('address')
+
+    if check_road_rail:
+        print 'Checking buildings overlapping with highway/railway.'
+        db.check_and_move('road/rail')
 
     print 'Closing DB connection.'
     db.close_db_conn()
