@@ -81,8 +81,8 @@ You should have 2 tables: `buildings_no_overlap` for the bulk process (i.e. buil
 
 ...
 
-Now, it's a good idea to create smaller subsets of the data for testing. Let's limit the area to Downtown and create some tables for the truncated data.
-Run the following query for each imported table.
+~~Now, it's a good idea to create smaller subsets of the data for testing. Let's limit the area to Downtown and create some tables for the truncated data.~~
+~~Run the following query for each imported table.~~
 
 ```sqlgeomfield
 create table large_buildings_test as (
