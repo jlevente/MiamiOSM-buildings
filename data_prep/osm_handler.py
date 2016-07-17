@@ -25,7 +25,10 @@ class OSMHandler():
             >;
             '''
         data = requests.post(self.overpassAPI, postdata % (self.bbox), timeout=180)
-        data = json.loads(data.text)
+        try:
+            data = json.loads(data.text)
+        except:
+            print 'Something went wrong when querying OverpassAPI (timeout, no json, etc.). Try it again bit later.'
         return data
 
     def query_address(self):
@@ -38,7 +41,10 @@ class OSMHandler():
         >;
         '''
         data = requests.post(self.overpassAPI, postdata % (self.bbox), timeout=180)
-        data = json.loads(data.text)
+        try:
+            data = json.loads(data.text)
+        except:
+            print 'Something went wrong when querying OverpassAPI (timeout, no json, etc.). Try it again bit later.'
         return data
 
     def query_roads(self):
@@ -54,26 +60,30 @@ class OSMHandler():
             >;
         '''
         data = requests.post(self.overpassAPI, postdata % (self.bbox))
-        data = json.loads(data.text)
+        try:
+            data = json.loads(data.text)
+        except:
+            print 'Something went wrong when querying OverpassAPI (timeout, no json, etc.). Try it again bit later.'
         return data
 
 def get_outer_way(id):
     overpassAPI = 'http://overpass-api.de/api/interpreter'
     print 'multi: %s' % id
     postdata = '''
-    [out:json][timeout:120];
+    [out:json][timeout:30];
     (
         way(%s);
     );
     out geom;
     >;
     '''
-    data = requests.post(overpassAPI, postdata % (id), timeout=120)
     try:
+        data = requests.post(overpassAPI, postdata % (id), timeout=30)
         data = json.loads(data.text)
         return data['elements'][0]
-    # Upload something to null island if OverpassAPI fails to return a JSON
-    except ValueError:
+    # Upload something to null island if OverpassAPI fails (timeout, no json, etc.)
+    # TODO: create function to update FIXME features later
+    except:
         return {
                 "type": "way",
                 "id": id,
