@@ -279,3 +279,24 @@ class DBHandler():
         self.cursor.execute('DELETE FROM buildings_overlap where objectid in %s;', (ids_to_move, ))
         print 'Moved %s buildings to manual bucket.' % len(ids_to_move)
         self.conn.commit()
+
+    def print_report(self):
+        self.cursor.execute('select count(objectid) from buildings_no_overlap')
+        buildings_no_overlap = self.cursor.fetchone()[0]
+        self.cursor.execute('select count(objectid) from buildings_overlap')
+        buildings_overlap = self.cursor.fetchone()[0]
+        self.cursor.execute('select count(objectid) from large_buildings_2013')
+        large_buildings = self.cursor.fetchone()[0]
+        self.cursor.execute('select count(objectid) from buildings_no_overlap where house_num is not null')
+        assigned_address = self.cursor.fetchone()[0]
+
+        text = '''
+        ---------------- QUICK REPORT ----------------
+        ----------------------------------------------
+        Total # of buildings:                       %s
+        Buildings to upload in bulk process:        %s
+        Buildings in bulk process with address:     %s
+        Buildings for manual inspection:            $s
+        ----------------------------------------------
+        '''
+        print text % (large_buildings, buildings_no_overlap, assigned_address, buildings_overlap)

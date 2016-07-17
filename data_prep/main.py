@@ -18,6 +18,7 @@ def get_args():
     p.add_argument('-crr', '--check_road_rail', help='Checks whether buildings to upload overlap with OSM highway=* or railway=*.', action="store_true")
     p.add_argument('-idx', '--index_data', help='Creates indexes on several tables.', action="store_true")
     p.add_argument('-a', '--assign_address', help='Assigns an address to buildings with only 1 overlapping address point.', action="store_true")
+    p.add_argument('-r', '--report', help='Prints out a quick report.', action="store_true")
     return p.parse_args()
 
 if __name__ == "__main__":
@@ -88,6 +89,9 @@ if __name__ == "__main__":
     if check_road_rail:
         print 'Checking buildings overlapping with highway/railway.'
         db.check_and_move('road/rail')
+
+    if print_report:
+        db.print_report()
 
     print 'Closing DB connection.'
     db.close_db_conn()
