@@ -76,8 +76,12 @@ class DBHandler():
                 height float,
                 zip float,
                 city varchar,
-                street varchar,
-                house_num varchar
+                sname varchar,
+                house_num varchar,
+                pre_dir varchar,
+                st_name varchar,
+                st_type varchar,
+                suf_dir varchar
             );
             SELECT AddGeometryColumn('buildings_no_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
@@ -89,8 +93,12 @@ class DBHandler():
                 height float,
                 zip float,
                 city varchar,
-                street varchar,
-                house_num varchar
+                sname varchar,
+                house_num varchar,
+                pre_dir varchar,
+                st_name varchar,
+                st_type varchar,
+                suf_dir varchar
             );
             SELECT AddGeometryColumn('buildings_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
@@ -227,10 +235,14 @@ class DBHandler():
             set
                 zip = x.zip,
                 city = x.mailing_mu,
-                street = x.sname,
-                house_num = x.hse_num
+                sname = x.sname,
+                house_num = x.hse_num,
+                st_name = x.st_name,
+                st_type = x.st_type,
+                pre_dir = x.pre_dir,
+                suf_dir = x.suf_dir
             from (
-                select b.objectid as building_id, a.hse_num, a.sname, a.mailing_mu, a.zip, num_address.count as count_addresses
+                select b.objectid as building_id, a.hse_num, a.sname, a.mailing_mu, a.zip, num_address.count as count_addresses, a.pre_dir, a.suf_dir, a.st_name, a.st_type
                 from
                     large_buildings_2013 b,
                     address a,
@@ -279,8 +291,8 @@ class DBHandler():
         ids_to_move = tuple(self.cursor.fetchone()[0])
         # Move those buildings to the manual bucket
         insert_sql = '''
-            INSERT INTO buildings_overlap (objectid, source, year_upd, height, zip, city, street, house_num, geom) 
-            (select objectid, source, year_upd, height, zip, city, street, house_num, geom from buildings_no_overlap b
+            INSERT INTO buildings_overlap (objectid, source, year_upd, height, zip, city, sname, house_num, pre_dir, st_name, st_type, suf_dir, geom) 
+            (select objectid, source, year_upd, height, zip, city, street, house_num, pre_dir, st_name, st_type, suf_dir, geom from buildings_no_overlap b
             where b.objectid IN %s)
         '''
         self.cursor.execute(insert_sql, (ids_to_move, ))
