@@ -121,7 +121,7 @@ class DBHandler():
         sql =  sql_pre + '(id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for el in data['elements']:
     #        print building
-    #        print building['type'],  building['id']
+    #        print el['type'],  el['id']
             if el['type'] == 'node':
                 self.cursor.execute(sql, (el['id'], el['type'], el['tags'], 'POINT (' + str(el['lon']) + ' ' + str(el['lat']) + ')'))
             # Upload them as Linestring 

@@ -34,6 +34,7 @@ if __name__ == "__main__":
     check_address = args["check_address"]
     check_road_rail = args["check_road_rail"]
     vacuum = args["vacuum"]
+    print_report = args["print_report"]
     index = args["index_data"]
     bbox = args["bbox"]
 
