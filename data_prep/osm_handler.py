@@ -59,15 +59,16 @@ class OSMHandler():
 
 def get_outer_way(id):
     overpassAPI = 'http://overpass-api.de/api/interpreter'
+    print 'multi: %s' % id
     postdata = '''
-    [out:json][timeout:25];
+    [out:json][timeout:120];
     (
         way(%s);
     );
     out geom;
     >;
     '''
-    data = requests.post(overpassAPI, postdata % (id))
+    data = requests.post(overpassAPI, postdata % (id), timeout=120)
     try:
         data = json.loads(data.text)
         return data['elements'][0]
