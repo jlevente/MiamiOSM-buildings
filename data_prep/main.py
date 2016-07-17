@@ -8,6 +8,7 @@ def get_args():
     p.add_argument('-setup', '--setup', help='Set up Postgres DB.', action='store_true')
     p.add_argument('-bd', '--buildings_download', help='Download Buildings from OSM', action='store_true')
     p.add_argument('-ad', '--address_download', help='Download Addresses from OSM', action='store_true')
+    p.add_argument('-rd', '--roads_download', help='Download highway=* from OSM', action='store_true')
     p.add_argument('-b', '--bbox', help='BBOX for OSM download (min_lat, min_long, max_lat, max_long). Whole extent of Large buildings is used if left empty')
     p.add_argument('-f', '--fix', help='Fix PostGIS geometry errors', action='store_true')
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
@@ -41,13 +42,19 @@ if __name__ == "__main__":
         print 'Querying OverpassAPI for buildings.'
         buildings = osm.query_buildings()
         print 'Uploading OSM buildings to Postgres...'
-        db.upload_buildings(buildings)
+        db.upload_osm(buildings, 'osm_buildings')
 
     if address_download:
         print 'Querying OverpassAPI for addresses.'
         addresses = osm.query_address()
-        print 'Uploading OSM addresses to Postgres'
-        db.upload_address(addresses)
+        print 'Uploading OSM addresses to Postgres...'
+        db.upload_osm(addresses, 'osm_address')
+
+    if roads_download:
+        print 'Querying OverpassAPI for highway=*.'
+        roads = osm.query_roads()
+        print 'Uploading OSM highway=* to Postgres...'
+        db.upload_osm(roads, 'osm_highway_railway')
 
     if fix:
         print 'Fixing geometry errors in Large Buildings dataset.'

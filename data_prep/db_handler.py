@@ -49,6 +49,16 @@ class DBHandler():
             SELECT AddGeometryColumn('osm_buildings', 'geom', 4326, 'GEOMETRY', 2);
             ALTER TABLE osm_buildings ADD PRIMARY KEY (id, type);
         '''
+        create_highway_railway_table_sql = '''
+            CREATE TABLE IF NOT EXISTS osm_highway_railway (
+                id bigint,
+                type varchar,
+                tags hstore
+            );
+        -- Use generic GEOMETRY type so we can store nodes and ways together
+            SELECT AddGeometryColumn('osm_highway_railway', 'geom', 4326, 'GEOMETRY', 2);
+            ALTER TABLE osm_highway_railway ADD PRIMARY KEY (id, type);
+        '''
         create_address_table_sql = '''
             CREATE TABLE IF NOT EXISTS osm_addresses (
                 id bigint,
@@ -85,9 +95,11 @@ class DBHandler():
             SELECT AddGeometryColumn('buildings_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
         populate_geom_sql = 'select Populate_Geometry_Columns();'
+
         self.cursor.execute(create_extension_sql)
         self.cursor.execute(create_building_table_sql)
         self.cursor.execute(create_address_table_sql)
+        self.cursor.execute(create_highway_railway_table_sql)
         self.cursor.execute(create_no_overlap_table_sql)
         self.cursor.execute(create_overlap_table_sql)
         self.cursor.execute(populate_geom_sql)
@@ -102,44 +114,35 @@ class DBHandler():
     def update_stats(self):
         self.cursor.execute('VACUUM ANALYZE;')
 
-    def upload_address(self, data):
-        sql = 'INSERT INTO osm_addresses (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
-        for poi in data['elements']:
-    #        print building
-    #        print poi['type'],  poi['id']
-            if poi['type'] == 'node':
-                self.cursor.execute(sql, (poi['id'], poi['type'], poi['tags'], 'POINT (' + str(poi['lon']) + ' ' + str(poi['lat']) + ')'))
-        self.conn.commit()
-
-    def upload_buildings(self, data):
+    def upload_osm(self, data, table):
         with_no_geom = 0
-        sql = 'INSERT INTO osm_buildings (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
-        for building in data['elements']:
+        sql = 'INSERT INTO %s (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));' % table
+        for el in data['elements']:
     #        print building
     #        print building['type'],  building['id']
-            if building['type'] == 'node':
-                self.cursor.execute(sql, (building['id'], building['type'], building['tags'], 'POINT (' + str(building['lon']) + ' ' + str(building['lat']) + ')'))
+            if el['type'] == 'node':
+                self.cursor.execute(sql, (el['id'], el['type'], el['tags'], 'POINT (' + str(el['lon']) + ' ' + str(el['lat']) + ')'))
             # Upload them as Linestring 
-            if building['type'] == 'way':
+            if el['type'] == 'way':
                 geom = 'LINESTRING ('
                 try:
-                    geom += self.build_wkt_coord_list(building['geometry'])
+                    geom += self.build_wkt_coord_list(el['geometry'])
                     geom += ')'
-                    self.cursor.execute(sql, (building['id'], building['type'],  building['tags'], geom))
+                    self.cursor.execute(sql, (el['id'], el['type'],  el['tags'], geom))
                 except KeyError:
                     continue
                     
             # Safe to assume relations are polygons but let's stick to Linestrings. Use only outer as we're interested in spatial overlaps.
-            if building['type'] == 'relation':
+            if el['type'] == 'relation':
                 geom = 'LINESTRING('
                 membercnt = 0
-                for member in building['members']:
+                for member in el['members']:
                     if member['role'] == 'outer':
                         membercnt += 1
                 if membercnt > 1:
                     # it's already been returned if there's no bounds... passing
                     try:
-                        bounds = building['bounds']
+                        bounds = el['bounds']
                     except KeyError:
                         continue
                     lower_left = str(bounds['minlon']) + ' ' + str(bounds['minlat'])
@@ -148,22 +151,21 @@ class DBHandler():
                     upper_left = str(bounds['minlon']) + ' ' + str(bounds['maxlat'])
                     geom = 'POLYGON((' + lower_left + ',' + lower_right + ',' + upper_right + ',' + upper_left + ',' + lower_left + '))'
                 else:
-                    for member in building['members']:
+                    for member in el['members']:
                         if member['role'] == 'outer':
                             geom += self.build_wkt_coord_list(get_outer_way(member['ref'])['geometry'])
                     geom += ')'
-                self.cursor.execute(sql, (building['id'], building['type'],  building['tags'], geom))
+                self.cursor.execute(sql, (el['id'], el['type'],  el['tags'], geom))
             # Upload bounds if it's a multipolygon
-            if building['type'] == 'multipolygon':
-                bounds = building['bounds']
+            if el['type'] == 'multipolygon':
+                bounds = el['bounds']
                 lower_left = str(bounds['minlon']) + ' ' + str(bounds['minlat'])
                 lower_right = str(bounds['maxlon']) + ' ' + str(bounds['minlat'])
                 upper_right = str(bounds['maxlon']) + ' ' + str(bounds['maxlat'])
                 upper_left = str(bounds['minlon']) + ' ' + str(bounds['maxlat'])
                 geom = 'POLYGON((' + lower_left + ',' + lower_right + ',' + upper_right + ',' + upper_left + ',' + lower_left + '))'
-                self.cursor.execute(sql, (building['id'], building['type'],  building['tags'], geom))
+                self.cursor.execute(sql, (el['id'], el['type'],  el['tags'], geom))
         self.conn.commit()
-        print '%s ways without "geometry" block' % with_no_geom
 
     def build_wkt_coord_list(self, geometry):
         i = 0

@@ -41,6 +41,22 @@ class OSMHandler():
         data = json.loads(data.text)
         return data
 
+    def query_roads(self):
+        postdata = '''
+        [out:json][bbox:%s][timeout:120];
+            (
+              relation["highway"];
+              way["highway"];
+              relation["railway"];
+              way["railway"];
+            );
+            out geom;
+            >;
+        '''
+        data = requests.post(self.overpassAPI, postdata % (self.bbox))
+        data = json.loads(data.text)
+        return data
+
 def get_outer_way(id):
     overpassAPI = 'http://overpass-api.de/api/interpreter'
     postdata = '''
