@@ -15,7 +15,7 @@ class OSMHandler():
 
     def query_buildings(self):
         postdata = '''
-            [out:json][bbox:%s][timeout:120];
+            [out:json][bbox:%s][timeout:180];
             (
               node["building"];
               relation["building"];
@@ -24,20 +24,20 @@ class OSMHandler():
             out geom;
             >;
             '''
-        data = requests.post(self.overpassAPI, postdata % (self.bbox))
+        data = requests.post(self.overpassAPI, postdata % (self.bbox), timeout=180)
         data = json.loads(data.text)
         return data
 
     def query_address(self):
         postdata = '''
-        [out:json][bbox:%s][timeout:120];
+        [out:json][bbox:%s][timeout:180];
         (
           node["addr:housenumber"];
         );
         out geom;
         >;
         '''
-        data = requests.post(self.overpassAPI, postdata % (self.bbox))
+        data = requests.post(self.overpassAPI, postdata % (self.bbox), timeout=180)
         data = json.loads(data.text)
         return data
 
