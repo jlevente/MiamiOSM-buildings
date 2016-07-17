@@ -34,7 +34,7 @@ if __name__ == "__main__":
     check_address = args["check_address"]
     check_road_rail = args["check_road_rail"]
     vacuum = args["vacuum"]
-    print_report = args["print_report"]
+    report = args["report"]
     index = args["index_data"]
     bbox = args["bbox"]
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
         print 'Querying OverpassAPI for addresses.'
         addresses = osm.query_address()
         print 'Uploading OSM addresses to Postgres...'
-        db.upload_osm(addresses, 'osm_address')
+        db.upload_osm(addresses, 'osm_addresses')
 
     if roads_download:
         print 'Querying OverpassAPI for highway=* and railway=*.'
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         print 'Checking buildings overlapping with highway/railway.'
         db.check_and_move('road/rail')
 
-    if print_report:
+    if report:
         db.print_report()
 
     print 'Closing DB connection.'

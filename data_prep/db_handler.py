@@ -107,7 +107,7 @@ class DBHandler():
 
     def create_index(self):
         building_index_sql = 'CREATE INDEX osm_building_geom_idx ON osm_buildings USING GIST (geom);'
-        address_index_sql = 'CREATE INDEX osm_address_geom_idx ON osm_address USING GIST (geom);'
+        address_index_sql = 'CREATE INDEX osm_address_geom_idx ON osm_addresses USING GIST (geom);'
         highway_index_sql = 'CREATE INDEX osm_highway_railway_idx ON osm_highway_railway USING GIST (geom);'
         self.cursor.execute(buildings_index_sql)
         self.cursor.execute(address_index_sql)
