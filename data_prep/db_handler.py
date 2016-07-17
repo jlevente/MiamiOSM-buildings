@@ -108,6 +108,7 @@ class DBHandler():
     def create_index(self):
         building_index_sql = 'CREATE INDEX osm_building_geom_idx ON osm_buildings USING GIST (geom);'
         address_index_sql = 'CREATE INDEX osm_address_geom_idx ON osm_address USING GIST (geom);'
+        highway_index_sql = 'CREATE INDEX osm_highway_railway_idx ON osm_highway_railway USING GIST (geom);'
         self.cursor.execute(buildings_index_sql)
         self.cursor.execute(address_index_sql)
 
@@ -116,7 +117,8 @@ class DBHandler():
 
     def upload_osm(self, data, table):
         with_no_geom = 0
-        sql = 'INSERT INTO %s (id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));' % table
+        sql_pre = 'INSERT INTO %s ' % table
+        sql =  sql_pre + '(id, type, tags, geom) VALUES (%s, %s, %s, ST_SetSRID(ST_GeomFromText(%s), 4326));'
         for el in data['elements']:
     #        print building
     #        print building['type'],  building['id']

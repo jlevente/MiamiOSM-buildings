@@ -23,6 +23,7 @@ if __name__ == "__main__":
     setup = args["setup"]
     building_download = args["buildings_download"]
     address_download = args["address_download"]
+    roads_download = args["roads_download"]
     fix = args["fix"]
     dsn = args["dsn"]
     intersect = args["intersect"]
@@ -51,9 +52,9 @@ if __name__ == "__main__":
         db.upload_osm(addresses, 'osm_address')
 
     if roads_download:
-        print 'Querying OverpassAPI for highway=*.'
+        print 'Querying OverpassAPI for highway=* and railway=*.'
         roads = osm.query_roads()
-        print 'Uploading OSM highway=* to Postgres...'
+        print 'Uploading OSM highway=* and railway=* to Postgres...'
         db.upload_osm(roads, 'osm_highway_railway')
 
     if fix:
