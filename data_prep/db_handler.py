@@ -1,7 +1,7 @@
 import psycopg2
 import psycopg2.extras
 import requests
-from osm_handler import OSMHandler
+from osm_handler import get_outer_way
 
 class DBHandler():
     def __init__(self, dsn):
@@ -155,7 +155,7 @@ class DBHandler():
                 else:
                     for member in el['members']:
                         if member['role'] == 'outer':
-                            geom += self.build_wkt_coord_list(OSMHandler.get_outer_way(member['ref'])['geometry'])
+                            geom += self.build_wkt_coord_list(get_outer_way(member['ref'])['geometry'])
                     geom += ')'
                 self.cursor.execute(sql, (el['id'], el['type'],  el['tags'], geom))
             # Upload bounds if it's a multipolygon
