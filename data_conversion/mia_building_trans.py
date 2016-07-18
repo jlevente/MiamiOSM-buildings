@@ -57,21 +57,26 @@ def filterTags(attrs):
         tags['addr:postcode'] = attrs['zip']
 
     if 'city' in attrs:
-        tags['addr:city'] = attrs['city']
+        if len(attrs['city']) > 0:
+            tags['addr:city'] = capwords(attrs['city'])
 
     street = []
 
     if 'pre_dir' in attrs:
-        street.append(attrs['pre_dir'])
+        if len(attrs['pre_dir']) > 0:
+            street.append(attrs['pre_dir'])
 
     if 'st_name' in attrs:
-        street.append(capwords(attrs['st_name'].lower()))
+        if len(attrs['st_name']) > 0:
+            street.append(capwords(attrs['st_name'].lower()))
 
     if 'st_type' in attrs:
-        street.append(pretty_type(attrs['st_type']))
+        if len(attrs['st_type']) > 0:
+            street.append(pretty_type(attrs['st_type']))
 
     if 'suf_dir' in attrs:
-        street.append(attrs['suf_dir'])
+        if len(attrs['suf_dir']) > 0:
+            street.append(attrs['suf_dir'])
 
     street_name = ' '.join(street)
     if street_name is not '':
