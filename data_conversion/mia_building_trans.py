@@ -50,7 +50,7 @@ def filterTags(attrs):
     if 'height' in attrs:
         if attrs['height'] is not None:
             # Convert feet to meters, round
-            tags['height'] = round(attrs['height'] * 0.3048, 1)
+            tags['height'] = unicode(round(float(attrs['height']) * 0.3048, 1))
 
     if 'objectid' in attrs:
         tags['miami_buildings:objectid'] = attrs['objectid']
