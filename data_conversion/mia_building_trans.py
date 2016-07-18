@@ -24,10 +24,10 @@ def pretty_type(type):
         "RD": "Road",
         "TER": "Terrace",
         "PKWY": "Parkway",
-        "PLZ": "",
-        "LN": "",
-        "PSGE": "",
-        "TRL": "",
+        "PLZ": "Plaza",
+        "LN": "Lane",
+        "PSGE": "Passage",
+        "TRL": "Trail",
         "PATH": "Path",
         "HWY": "Highway",
         "CIR": "Circle",
@@ -35,9 +35,9 @@ def pretty_type(type):
         "WAY": "Way",
         "DR": "Drive",
         "EXT": "Extension",
-        "PL": "",
-        "CONC": "",
-        "PASS": "",
+        "PL": "Place",
+        "CONC": "Concession",
+        "PASS": "Pass",
         "CT": "Court"
     }
     return types_dict[type]
