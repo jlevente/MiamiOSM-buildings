@@ -48,13 +48,16 @@ def filterTags(attrs):
     tags = {}
     
     if 'height' in attrs:
-        tags['height'] = attrs['height']
+        if attrs['height'] is not None:
+            # Convert feet to meters, round
+            tags['height'] = round(attrs['height'] * 0.3048, 1)
 
     if 'objectid' in attrs:
         tags['miami_buildings:objectid'] = attrs['objectid']
 
     if 'zip' in attrs:
-        tags['addr:postcode'] = attrs['zip']
+        if len(attrs['zip']) > 0:
+            tags['addr:postcode'] = attrs['zip']
 
     if 'city' in attrs:
         if len(attrs['city']) > 0:
@@ -83,7 +86,8 @@ def filterTags(attrs):
         tags['addr:street'] = street_name
 
     if 'house_num' in attrs:
-        tags['addr:housenumber'] = attrs['house_num']
+        if len(attrs['house_num']) > 0:
+            tags['addr:housenumber'] = attrs['house_num']
 
     tags['building'] = 'yes'
     tags['source'] = 'Miami Building Import 2016'
