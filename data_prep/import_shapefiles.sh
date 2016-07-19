@@ -14,3 +14,6 @@ ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbnam
 
 echo 'Importing College dataset...'
 ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom $1"/College.shp"
+
+echo 'Importing Block Groups dataset...'
+ogr2ogr -f "PostgreSQL" PG:"host=localhost user=postgres password=postgres dbname=osmbuildings_miami port=5432" -lco GEOMETRY_NAME=geom $1"/Block_Groups_2010.shp"
