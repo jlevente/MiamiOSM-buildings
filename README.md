@@ -43,6 +43,9 @@ python data_prep/main.py --address_download
 - Grab highways/railways from OverpassAPI (osm_highway_railway)
 ```
 python data_prem/main.py --roads_download
+
+### Prepare the data for conversion
+
 ```
 - Add indexes:
 ```
@@ -78,6 +81,21 @@ python data_prep/main.py --report
 ```
 
 You should have 2 tables: `buildings_no_overlap` for the bulk process (i.e. buildings not interfering with existing OSM data) and `buildings_overlap` for the manual process (i.e. buildings that need manual inspection).
+
+## Data conversion
+
+- Clone `ogr2ogr` in parent directory
+```
+cd ..
+sudo apt-get install -y python-gdal python-lxml
+git clone --recursive https://github.com/pnorman/ogr2osm
+```
+
+- Navigate back to `MiamiOSM-buildings` and convert `buildings_no_overlap` t an *.osm file (manual bucket)
+```
+cd MiamiOSM-buildings
+./data_conversion/generate_osm_file_bulk.sh mia_building_trans.py miami_test_bulk.osm
+```
 
 ...
 
