@@ -274,6 +274,7 @@ class DBHandler():
                 select array_agg(b.objectid) from buildings_no_overlap b, osm_addresses a
                 where
                     a.geom && b.geom and st_intersects(b.geom, a.geom) and
+                    b.house_num is not null and
                     -- 30 m seems feasible. just to be safe
                     st_dwithin(b.geom::geography, a.geom::geography, 30)''')
         elif move_type == 'road/rail':
