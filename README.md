@@ -10,13 +10,17 @@ The documentation is a mess. Well, it's not really a documentation yet but a col
 
 ## Prerequisites 
 
+Python 2.7.
+
 Install `PostgreSQL` with `PostGIS` on your system. You can find some help [here](http://wiki.openstreetmap.org/wiki/PostGIS/Installation#).
 
-You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#install-from-package) python package.
+You will also need the [`psycopg2`](http://initd.org/psycopg/docs/install.html#install-from-package) and `requests` python packages.
 
-~~Install osmosis with `apt-get install osmosis` on Ubuntu/Debian (other platforms see http://wiki.openstreetmap.org/wiki/Osmosis/Installation).~~
+Install osmosis with `apt-get install osmosis` on Ubuntu/Debian (other platforms see http://wiki.openstreetmap.org/wiki/Osmosis/Installation).
 
 Install `GDAL/OGR` for your system. Used for importing shapefiles to Postgres with `ogr2ogr`.
+
+PLUS `osmconvert`, `ogr2osm`, ...
 
 ## Data preparation [Under Construction]
 
@@ -44,9 +48,9 @@ python data_prep/main.py --address_download
 ```
 python data_prem/main.py --roads_download
 
+```
 ### Prepare the data for conversion
 
-```
 - Add indexes:
 ```
 python data_prep/main.py --index_data
@@ -84,7 +88,7 @@ You should have 2 tables: `buildings_no_overlap` for the bulk process (i.e. buil
 
 ## Data conversion
 
-- Clone `ogr2ogr` in parent directory
+- Clone `ogr2osm` in parent directory
 ```
 cd ..
 sudo apt-get install -y python-gdal python-lxml
@@ -94,29 +98,10 @@ git clone --recursive https://github.com/pnorman/ogr2osm
 - Navigate back to `MiamiOSM-buildings` and convert `buildings_no_overlap` t an *.osm file (manual bucket)
 ```
 cd MiamiOSM-buildings
-./data_conversion/generate_osm_file_bulk.sh mia_building_trans.py miami_test_bulk.osm
+./data_conversion/generate_osm_files.sh bulk
 ```
 
-...
-
-~~Now, it's a good idea to create smaller subsets of the data for testing. Let's limit the area to Downtown and create some tables for the truncated data.~~
-~~Run the following query for each imported table.~~
-
-```sqlgeomfield
-create table large_buildings_test as (
-	select * from large_buildings_2013 where
-		ST_Intersects(geom, st_setsrid(st_makeenvelope(-80.200582, 25.770098, -80.185132, 25.780107), 4326))
-)
+- Generate supplementary files with overlapping buildings and addresses for each block group
 ```
-### Check and Remove or Fix invalid geometries
-
-Check/repair both datasets using `ST_isValidReason()` and `ST_makeValid()`
-
-### Geocode addresses
-
-### Spatial overlap
-
-To create set of buildings for bulk upload.
-
-...
-
+./data_conversion/generate_osm_files.sh review
+```
