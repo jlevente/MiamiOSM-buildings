@@ -8,6 +8,9 @@ More info on the [Wiki](http://wiki.openstreetmap.org/wiki/Miami-Dade_County_Lar
 
 The documentation is a mess. Well, it's not really a documentation yet but a collections of notes and ideas during the planning stage. Don't worry. It'll be nice and clean once we're done.
 
+![Buildings in MIA](img/buildings_satellite.jpg)
+
+
 ## Prerequisites 
 
 Python 2.7.
