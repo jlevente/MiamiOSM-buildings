@@ -4,6 +4,7 @@ import json
 class OSMHandler():
     def __init__(self, bbox):
         self.overpassAPI = 'http://overpass-api.de/api/interpreter'
+        # Alternatively, use the French instance: overpassAPI = 'http://api.openstreetmap.fr/oapi/interpreter/'
 
         if bbox is not None:
             self.bbox = bbox
@@ -68,6 +69,7 @@ class OSMHandler():
 
 def get_outer_way(id):
     overpassAPI = 'http://overpass-api.de/api/interpreter'
+    # Alternatively, use the French instance: overpassAPI = 'http://api.openstreetmap.fr/oapi/interpreter/'
     print 'multi: %s' % id
     postdata = '''
     [out:json][timeout:30];
