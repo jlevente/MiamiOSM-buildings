@@ -10,7 +10,8 @@ def get_args():
     p.add_argument('-ad', '--address_download', help='Download Addresses from OSM', action='store_true')
     p.add_argument('-rd', '--roads_download', help='Download highway=* from OSM', action='store_true')
     p.add_argument('-b', '--bbox', help='BBOX for OSM download (min_lat, min_long, max_lat, max_long). Whole extent of Large buildings is used if left empty')
-    p.add_argument('-f', '--fix', help='Fix PostGIS geometry errors', action='store_true')
+    p.add_argument('-msi', '--move_self_intersect', help='Movies self intersecting buildings to manual bucket.', action='store_true')
+    p.add_argument('-de', '--delete_err', help='Removes erroneous buildings ', action='store_true')
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
     p.add_argument('-i', '--intersect', help='Performs intersection of Large Buildings and OSM buildings.', action="store_true")
     p.add_argument('-v', '--vacuum', help='Vacuums Postgres DB.', action="store_true")
@@ -27,7 +28,8 @@ if __name__ == "__main__":
     building_download = args["buildings_download"]
     address_download = args["address_download"]
     roads_download = args["roads_download"]
-    fix = args["fix"]
+    delete_err = args["delete_err"]
+    move_self_intersect = args["move_self_intersect"]
     dsn = args["dsn"]
     intersect = args["intersect"]
     address = args["assign_address"]
@@ -63,10 +65,6 @@ if __name__ == "__main__":
         print 'Uploading OSM highway=* and railway=* to Postgres...'
         db.upload_osm(roads, 'osm_highway_railway')
 
-    if fix:
-        print 'Fixing geometry errors in Large Buildings dataset.'
-        db.fix_invalid_geom()
-
     if vacuum:
         print 'Updating DB stats.'
         db.update_stats()
@@ -75,9 +73,17 @@ if __name__ == "__main__":
         print 'Creating multiple indexes.'
         db.create_index()
 
+    if delete_err:
+        print 'Removing faulty buildings.'
+        db.delete_err_buildings()
+
     if intersect:
         print 'Intersecting OSM buildings with Large buildings. Populating tables for overlapping and non-overlapping buildings.'
         db.do_intersection()
+
+    if move_self_intersect:
+        print 'Checking self intersecting buildings and moving them to manual bucket.'
+        db.move_self_intersect()
 
     if address:
         print 'Assigning addresses to buildings.'

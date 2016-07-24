@@ -28,7 +28,7 @@ class DBHandler():
         try:
             psycopg2.extras.register_hstore(self.conn)
         except:
-            print 'Could not register hstore. Are you running it for the first time? Should be OK next time.'
+            print 'Could not register hstore. Are you running it for the first time (no hstore data in DB). You should be OK next time though.'
         self.cursor = self.conn.cursor()
 
     def close_db_conn(self):
@@ -117,7 +117,11 @@ class DBHandler():
         building_index_sql = 'CREATE INDEX osm_building_geom_idx ON osm_buildings USING GIST (geom);'
         address_index_sql = 'CREATE INDEX osm_address_geom_idx ON osm_addresses USING GIST (geom);'
         highway_index_sql = 'CREATE INDEX osm_highway_railway_geom_idx ON osm_highway_railway USING GIST (geom);'
+        building_bulk_index_sql = 'CREATE INDEX osm_building_no_overlap_geom_idx ON buildings_no_overlap USING GIST (geom);'
+        building_manual_index_sql = 'CREATE INDEX osm_building_overlap_geom_idx ON buildings_overlap USING GIST (geom);'
         self.cursor.execute(building_index_sql)
+        self.cursor.execute(building_bulk_index_sql)
+        self.cursor.execute(building_manual_index_sql)
         self.cursor.execute(address_index_sql)
         self.cursor.execute(highway_index_sql)
         self.conn.commit()
@@ -196,10 +200,37 @@ class DBHandler():
             i += 1
         return coord_list
 
-    def fix_invalid_geom(self):
+    def move_self_intersect(self):
         sql = '''
-            UPDATE large_buildings_2013 set geom = st_makevalid(geom)
-            WHERE st_isvalid(geom) is false;
+            select array_agg(objectid) from buildings_no_overlap 
+            WHERE st_isvalid(geom) is false
+        '''
+        self.cursor.execute(sql)
+        try:
+            ids_to_move = tuple(self.cursor.fetchone()[0])
+        except TypeError:
+            print 'No self intersecting buildings.'
+            return
+        # Move those buildings to the manual bucket
+        insert_sql = '''
+            INSERT INTO buildings_overlap (objectid, source, year_upd, height, zip, city, sname, house_num, pre_dir, st_name, st_type, suf_dir, geom) 
+            (select objectid, source, year_upd, height, zip, city, sname, house_num, pre_dir, st_name, st_type, suf_dir, geom from buildings_no_overlap b
+            where b.objectid IN %s)
+        '''
+        self.cursor.execute(insert_sql, (ids_to_move, ))
+        self.conn.commit()
+        # Remove buildings from bulk table
+        self.cursor.execute('DELETE FROM buildings_no_overlap where objectid in %s;', (ids_to_move, ))
+        print 'Moved %s buildings to manual bucket.' % len(ids_to_move)
+        self.conn.commit()
+
+    def delete_err_buildings(self):
+        sql = '''
+            delete from buildings_no_overlap where objectid in (
+                -- ways with same position error
+                35616, 64730,
+                -- overlapping buildings error (area < 0.1 sq meters)
+                68455);
         '''
         self.cursor.execute(sql)
         self.conn.commit()
@@ -274,7 +305,6 @@ class DBHandler():
                 select array_agg(b.objectid) from buildings_no_overlap b, osm_addresses a
                 where
                     a.geom && b.geom and st_intersects(b.geom, a.geom) and
-                    b.house_num is not null and
                     -- 30 m seems feasible. just to be safe
                     st_dwithin(b.geom::geography, a.geom::geography, 30)''')
         elif move_type == 'road/rail':
@@ -289,11 +319,15 @@ class DBHandler():
         else:
             print 'Wrong move_type.'
             return
-        ids_to_move = tuple(self.cursor.fetchone()[0])
+        try:
+            ids_to_move = tuple(self.cursor.fetchone()[0])
+        except TypeError:
+            print 'No buildings to move.'
+            return
         # Move those buildings to the manual bucket
         insert_sql = '''
             INSERT INTO buildings_overlap (objectid, source, year_upd, height, zip, city, sname, house_num, pre_dir, st_name, st_type, suf_dir, geom) 
-            (select objectid, source, year_upd, height, zip, city, street, house_num, pre_dir, st_name, st_type, suf_dir, geom from buildings_no_overlap b
+            (select objectid, source, year_upd, height, zip, city, sname, house_num, pre_dir, st_name, st_type, suf_dir, geom from buildings_no_overlap b
             where b.objectid IN %s)
         '''
         self.cursor.execute(insert_sql, (ids_to_move, ))
