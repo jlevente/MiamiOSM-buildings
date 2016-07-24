@@ -49,7 +49,7 @@ python data_prep/main.py --address_download
 ```
 - Grab highways/railways from OverpassAPI (osm_highway_railway)
 ```
-python data_prem/main.py --roads_download
+python data_prep/main.py --roads_download
 
 ```
 ### Prepare the data for conversion
@@ -62,17 +62,21 @@ python data_prep/main.py --index_data
 ```
 python data_prep/main.py --vacuum
 ```
-- Fix some geometry errors in Large Buildings
- ```
-python data_prep/main.py --fix
- ```
 - Spatial intersection between Large Buildings and osm_buildings. Will result in 2 tables - buildings_no_overlap (for the bulk process) and buildings_overlap (for manually merging them with OSM)
 ```
 python data_prep/main.py --intersect
 ```
+- Delete buildings with logical errors (small area, misplaced "whole")
+ ```
+python data_prep/main.py --delete_err
+ ```
 - Assign address to 'buildings_no_overlap' where there's 1-1 building-address relation
 ```
 python data_prep/main.py --assign_address
+```
+- Move self intersecting buidlings to manual bucket.
+```
+python data_prep/main.py --move_self_intersect
 ```
 - Check if buildings are near existing OSM addresses. Move those that are closer than 30m to manual bucket.
 ```
