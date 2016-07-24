@@ -56,7 +56,7 @@ if [ "$1" == 'review' ]; then
     # Sort and merge
     osmosis --read-xml $out_folder"/"$objectid"_address_fake.osm" --sort type="TypeThenId" --write-xml $out_folder"/"$objectid"_address_sort.osm"
     osmosis --read-xml $out_folder"/"$objectid"_building_fake.osm" --sort type="TypeThenId" --write-xml $out_folder"/"$objectid"_building_sort.osm"
-    osmosis --read-xml $out_folder"/"$objectid"_building_sort.osm" --read-xml $out_folder"/"$objectid"_address_sort.osm" --merge --write-xml $out_folder"/"$objectid".osm"
+    osmosis --read-xml $out_folder"/"$objectid"_building_sort.osm" --read-xml $out_folder"/"$objectid"_address_sort.osm" --merge --write-xml $out_folder"/mia_building_"$objectid".osm"
 
     # Cleanup
     rm $out_folder"/"$objectid"_building.osm" $out_folder"/"$objectid"_building_fake.osm" $out_folder"/"$objectid"_building_sort.osm" $out_folder"/"$objectid"_address.osm" $out_folder"/"$objectid"_address_fake.osm" $out_folder"/"$objectid"_address_sort.osm"
