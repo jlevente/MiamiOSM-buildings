@@ -9,11 +9,14 @@ Fields used:
 
 FIELD           DESC                    OSM_TAG
 objectid        id of feature           miami_buildings:objectid
-height          height of building      height
+height		height of building [ft]	height [m]
 zip             zip code                addr:postcode
 city            mailing municipality    addr:city
-street          street                  addr:street
+pre_dir         prefix of street        addr:street
+suf_dir         suffix of street        addr:street
 house_num       house number            addr:housenumber
+st_name		name of street		addr:street
+st_type		type of street		addr:street
 '''
 
 def pretty_type(type):
