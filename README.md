@@ -69,9 +69,9 @@ python data_prep/main.py --vacuum
 python data_prep/main.py --intersect
 ```
 - Delete buildings with logical errors (small area, misplaced "whole")
- ```
+```
 python data_prep/main.py --delete_err
- ```
+```
 - Assign address to 'buildings_no_overlap' where there's 1-1 building-address relation
 ```
 python data_prep/main.py --assign_address
