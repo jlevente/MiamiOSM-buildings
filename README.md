@@ -1,12 +1,13 @@
 # Miami-Dade County Large Building Import
 
-**The project is getting close to the execution phase. Please give feedbac!**
+**The project is getting close to the execution phase. Please give feedback!**
 
 Software tools and technical description of the Miami-Dade County Large Building Import process.
 
 More info on the [Wiki](http://wiki.openstreetmap.org/wiki/Miami-Dade_County_Large_Building_Import).
 
-**Sample files are available for the community to review [here](http://jlevente.com/sample_osm).**
+**!!Sample files are available for the community to review [here](http://jlevente.com/sample_osm).!!**
+
 Files with number suffixes contain data by US Census Block Group (a.k.a. manual import) whereas `mia_building_5k.osm` is a subset of the dataset that's going to be uploaded automatically.
 
 ![Buildings in MIA](img/buildings_satellite.jpg)
