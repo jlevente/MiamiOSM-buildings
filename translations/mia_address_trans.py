@@ -14,8 +14,8 @@ city            mailing municipality    addr:city
 pre_dir         prefix of street        addr:street
 suf_dir         suffix of street        addr:street
 house_num       house number            addr:housenumber
-st_name	        name of street          addr:street
-st_type	        type of street          addr:street
+st_name         name of street          addr:street
+st_type         type of street          addr:street
 '''
 
 def pretty_type(type):
@@ -86,6 +86,6 @@ def filterTags(attrs):
         if len(attrs['house_num']) > 0:
             tags['addr:housenumber'] = attrs['house_num']
 
-    tags['source'] = 'Miami-Dade County GIS Open Data, http://gis.mdc.opendata.arcgis.com'
+    #tags['source'] = 'Miami-Dade County GIS Open Data, http://gis.mdc.opendata.arcgis.com'
 
     return tags
