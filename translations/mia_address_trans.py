@@ -86,6 +86,6 @@ def filterTags(attrs):
         if len(attrs['house_num']) > 0:
             tags['addr:housenumber'] = attrs['house_num']
 
-    tags['source'] = 'Miami Building Import 2016'
+    tags['source'] = 'Miami-Dade County GIS Open Data, http://gis.mdc.opendata.arcgis.com'
 
     return tags
