@@ -38,6 +38,7 @@ def pretty_type(type):
         "DR": "Drive",
         "EXT": "Extension",
         "PL": "Place",
+        "PT": "Point",
         "CONC": "Concession",
         "PASS": "Pass",
         "CT": "Court"
