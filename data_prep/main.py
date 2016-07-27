@@ -6,12 +6,13 @@ def get_args():
     import argparse
     p = argparse.ArgumentParser(description="Data preparation for Miami's OSM Building import")
     p.add_argument('-setup', '--setup', help='Set up Postgres DB.', action='store_true')
-    p.add_argument('-bd', '--buildings_download', help='Download Buildings from OSM', action='store_true')
-    p.add_argument('-ad', '--address_download', help='Download Addresses from OSM', action='store_true')
-    p.add_argument('-rd', '--roads_download', help='Download highway=* from OSM', action='store_true')
+    p.add_argument('-bd', '--buildings_download', help='Download Buildings from OSM', action="store_true")
+    p.add_argument('-ad', '--address_download', help='Download Addresses from OSM', action="store_true")
+    p.add_argument('-rd', '--roads_download', help='Download highway=* from OSM', action="store_true")
     p.add_argument('-b', '--bbox', help='BBOX for OSM download (min_lat, min_long, max_lat, max_long). Whole extent of Large buildings is used if left empty')
-    p.add_argument('-msi', '--move_self_intersect', help='Movies self intersecting buildings to manual bucket.', action='store_true')
+    p.add_argument('-msi', '--move_self_intersect', help='Moves self intersecting buildings to manual bucket.', action="store_true")
     p.add_argument('-de', '--delete_err', help='Removes erroneous buildings ', action='store_true')
+    p.add_argument('-mi', '--move_intersect', help='Moves buildings that share common border to manual bucket', action="store_true")
     p.add_argument('-d', '--dsn', help='Dsn for database connection.')
     p.add_argument('-i', '--intersect', help='Performs intersection of Large Buildings and OSM buildings.', action="store_true")
     p.add_argument('-v', '--vacuum', help='Vacuums Postgres DB.', action="store_true")
@@ -30,6 +31,7 @@ if __name__ == "__main__":
     roads_download = args["roads_download"]
     delete_err = args["delete_err"]
     move_self_intersect = args["move_self_intersect"]
+    move_inteserct = args["move_intersect"]
     dsn = args["dsn"]
     intersect = args["intersect"]
     address = args["assign_address"]
@@ -84,6 +86,10 @@ if __name__ == "__main__":
     if move_self_intersect:
         print 'Checking self intersecting buildings and moving them to manual bucket.'
         db.move_self_intersect()
+
+    if move_intersect:
+        print 'Moving buildings that share common border to manual bucket'
+        db.move_intersect()
 
     if address:
         print 'Assigning addresses to buildings.'

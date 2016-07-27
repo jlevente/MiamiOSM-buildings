@@ -80,6 +80,10 @@ python data_prep/main.py --assign_address
 ```
 python data_prep/main.py --move_self_intersect
 ```
+- Move buildings with shared borders to manual bucket.
+```
+python data_prep/main.py --move_intersect
+```
 - Check if buildings are near existing OSM addresses. Move those that are closer than 30m to manual bucket.
 ```
 python data_prep/main.py --check_address
