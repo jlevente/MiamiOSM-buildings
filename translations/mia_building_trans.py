@@ -46,6 +46,19 @@ def pretty_type(type):
     }
     return types_dict[type]
 
+def pretty_prefix(prefix):
+    prefix_dict = {
+        "N": "North",
+        "S": "South",
+        "W": "West",
+        "E": "East",
+        "NW": "Northwest",
+        "NE": "Northeast",
+        "SW": "Southwest",
+        "SE": "Southeast"
+    }
+    return prefix_dict[prefix]
+
 def filterTags(attrs):
     if not attrs:
         return
@@ -71,7 +84,7 @@ def filterTags(attrs):
 
     if 'pre_dir' in attrs:
         if len(attrs['pre_dir']) > 0:
-            street.append(attrs['pre_dir'])
+            street.append(pretty_prefix(attrs['pre_dir']))
 
     if 'st_name' in attrs:
         if len(attrs['st_name']) > 0:
