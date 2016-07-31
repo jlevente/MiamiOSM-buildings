@@ -43,30 +43,33 @@ class DBHandler():
             CREATE TABLE IF NOT EXISTS osm_buildings (
                 id bigint,
                 type varchar,
-                tags hstore
+                tags hstore,
+                constraint pk_building_id_type primary key (id, type)
             );
         -- Use generic GEOMETRY type so we can store nodes and ways together
+            ALTER TABLE osm_buildings drop column IF EXISTS geom;
             SELECT AddGeometryColumn('osm_buildings', 'geom', 4326, 'GEOMETRY', 2);
-            ALTER TABLE osm_buildings ADD PRIMARY KEY (id, type);
         '''
         create_highway_railway_table_sql = '''
             CREATE TABLE IF NOT EXISTS osm_highway_railway (
                 id bigint,
                 type varchar,
-                tags hstore
+                tags hstore,
+                constraint pk_road_id_type primary key (id, type)
             );
         -- Use generic GEOMETRY type so we can store nodes and ways together
+            ALTER TABLE osm_highway_railway DROP COLUMN IF EXISTS geom;
             SELECT AddGeometryColumn('osm_highway_railway', 'geom', 4326, 'GEOMETRY', 2);
-            ALTER TABLE osm_highway_railway ADD PRIMARY KEY (id, type);
         '''
         create_address_table_sql = '''
             CREATE TABLE IF NOT EXISTS osm_addresses (
                 id bigint,
                 type varchar,
-                tags hstore
+                tags hstore,
+                constraint pk_address_id_type primary key (id, type)
             );
+            ALTER TABLE osm_addresses DROP COLUMN IF EXISTS geom;
             SELECT AddGeometryColumn('osm_addresses', 'geom', 4326, 'POINT', 2);
-            ALTER TABLE osm_addresses ADD PRIMARY KEY (id, type);
         '''
         create_no_overlap_table_sql = '''
             CREATE TABLE IF NOT EXISTS buildings_no_overlap (
@@ -83,6 +86,7 @@ class DBHandler():
                 st_type varchar,
                 suf_dir varchar
             );
+            ALTER TABLE buildings_no_overlap DROP COLUMN IF EXISTS geom;
             SELECT AddGeometryColumn('buildings_no_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
         create_overlap_table_sql = '''
@@ -100,6 +104,7 @@ class DBHandler():
                 st_type varchar,
                 suf_dir varchar
             );
+            ALTER TABLE buildings_overlap DROP COLUMN IF EXISTS geom;
             SELECT AddGeometryColumn('buildings_overlap','geom', 4326, 'GEOMETRY', 2);
         '''
         populate_geom_sql = 'select Populate_Geometry_Columns();'
