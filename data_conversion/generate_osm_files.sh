@@ -18,11 +18,19 @@ echo "ogr2osm dir: $ogr2osm_dir"
 
 if [ "$1" == 'bulk' ]; then
   echo "Generating osm file for Bulk upload..."
+  
+  mkdir -p bulk
+  out_folder='bulk'
 
-  output_name="mia_building_bulk.osm"
-  sql="SELECT height, objectid, zip, city, pre_dir, st_name, st_type, suf_dir, house_num, geom from buildings_no_overlap"
+  step=5000
+  for (( cnt=0; cnt<=100000; cnt+=step )); do
+    echo $cnt
+    output_name="mia_building_bulk_"$cnt".osm"
+    max_id=$cnt+$step
+    sql="SELECT height, objectid, zip, city, pre_dir, st_name, st_type, suf_dir, house_num, geom from buildings_no_overlap where objectid >= $cnt and objectid < $max_id"
 
-  python $ogr2osm_dir/ogr2osm.py "$dsn" -t $translation -f -o $output_name --sql "$sql"
+    python $ogr2osm_dir/ogr2osm.py "$dsn" -t $translation -f -o $out_folder"/"$output_name --sql "$sql"
+  done
 
 fi
 
