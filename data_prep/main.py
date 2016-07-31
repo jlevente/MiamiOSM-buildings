@@ -31,7 +31,7 @@ if __name__ == "__main__":
     roads_download = args["roads_download"]
     delete_err = args["delete_err"]
     move_self_intersect = args["move_self_intersect"]
-    move_inteserct = args["move_intersect"]
+    move_intersect = args["move_intersect"]
     dsn = args["dsn"]
     intersect = args["intersect"]
     address = args["assign_address"]
