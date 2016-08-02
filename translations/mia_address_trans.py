@@ -64,7 +64,7 @@ def filterTags(attrs):
     tags = {}
 
     if 'objectid' in attrs:
-        tags['miami_address:objectid'] = attrs['objectid']
+        tags['ref:miaaddr'] = attrs['objectid']
 
     if 'zip' in attrs:
         if len(attrs['zip']) > 0:

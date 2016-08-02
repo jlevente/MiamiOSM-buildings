@@ -70,7 +70,7 @@ def filterTags(attrs):
             tags['height'] = unicode(round(float(attrs['height']) * 0.3048, 1))
 
     if 'objectid' in attrs:
-        tags['miami_buildings:objectid'] = attrs['objectid']
+        tags['ref:miabldg'] = attrs['objectid']
 
     if 'zip' in attrs:
         if len(attrs['zip']) > 0:
