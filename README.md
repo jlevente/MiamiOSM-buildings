@@ -27,6 +27,12 @@ Install `GDAL/OGR` for your system. Used for importing shapefiles to Postgres wi
 
 PLUS `osmconvert`, `ogr2osm`, ...
 
+Download the data files from here:
+```
+Large Buildings - http://gis.mdc.opendata.arcgis.com/datasets/1e87b925717747c7b59979caa7779039_1
+Address - http://gis.mdc.opendata.arcgis.com/datasets/128dcc2c4cac403dbd1d7440e10fa583_0
+```
+
 ## Data preparation [Under Construction]
 
 - Create a PostgreSQL database called osmbuildings_miami (make sure user 'postgres' with the password 'postgres' has access to it). I might make this more flexible later because right now this is kind of hardcoded into the source
