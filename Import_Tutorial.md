@@ -30,6 +30,36 @@ To contribute to this project, you need to use the JOSM editor. Here are some re
 - LearnOSM - http://learnosm.org/en/josm/
 - Mapbox Mapping wiki - https://www.mapbox.com/blog/making-the-most-josm/
 
-## Manual import process
+### Getting familiar with the Tasking Manager
 
 The tasks are organized on Tasking Manager (http://tasks.osm.jlevente.com). Check it out.
+
+## Import workflow
+
+### Install auto-tools plugin in JOSM
+
+The good folks at Mapbox created a plugin to merge building shapes sliced by parcel boundaries. You can find it [here](https://github.com/mapbox/auto-tools).
+
+Open JOSM and install it at **Edit -> Preferences -> Plugins**
+
+![install auto-tools](img/auto_tools_install.jpg)
+
+### Activate JOSM remote control
+
+The remote control is used to load data layers to JOSM directly from the Tasking Manager.
+
+Open JOSM and activate Remote Control at **Edit -> Prefernces -> Remote Control**
+
+![activate remote](img/activate_remote.jpg)
+
+### Select a task in the Tasking Manager
+
+- Navigate to http://tasks.osm.jlevente.com and choose an area to work on.
+- Click on **Start Mapping**
+- Download current OSM data by selecting **Edit in JOSM** (JOSM needs to be running)
+    Now the task is locked and others know you're working on it.
+
+![select task](img/select_task.jpg)
+![edit with josm](img/edit_with_josm.jpg)
+
+
