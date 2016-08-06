@@ -42,7 +42,7 @@ The good folks at Mapbox created a plugin to merge building shapes sliced by par
 
 Open JOSM and install it at **Edit -> Preferences -> Plugins**
 
-![install auto-tools](img/auto_tools_install.jpg)
+![install auto-tools](img/autotools_install.jpg)
 
 ### Activate JOSM remote control
 
