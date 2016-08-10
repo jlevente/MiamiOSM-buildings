@@ -1,7 +1,7 @@
 Miami-Dade County Building Import Tutorial
 =============
 
-**This import tutorial is inspired by and largely based on the work of the awesome people behind [LA County imports](https://github.com/osmlab/labuildings/blob/master/IMPORTING.md)**
+**!! This import tutorial is inspired by and largely based on the work of the awesome people behind [LA County imports](https://github.com/osmlab/labuildings/blob/master/IMPORTING.md). !!**
 
 ### About this import
 
@@ -66,10 +66,47 @@ Open JOSM and activate Remote Control at **Edit -> Prefernces -> Remote Control*
 
 ![josm_sample](img/layers_in_josm.jpg)
 
+## Importing
+
 ### Combining data layers
 
 - Run the Validator and check for potential conflicts in each layer. Try to solve them.
-- Select both layers in JOSM and merge them via **Right click -> Merge**. Target layer should be `**mia_building_####.osm`. This step combines the 2 layers. You have to be very careful from this step on as now you have overlapping buildings.
+- Select both layers in JOSM and merge them via **Right click -> Merge**. Target layer should be **`mia_building_####.osm`**. This step combines the 2 layers. You have to be very careful from this step on as now you have overlapping buildings.
+- Buildings in the import set will always have `ref:miabld` (and `ref:miaaddr` for addresses) tags. You can use these to decide the original source of an OSM feature)
 
+### Manually checking buildings
 
+There are different scenarios you will want to look for. Keep in mind that you are working with buildings with potential conflicts. These conflicts can be the following:
 
+**Remember** that you can alway tell which building is from the import set by checking for `ref:miabldg` tag.
+
+- Buildings overlapping with existing OSM buildings
+- Buildings with geometry errors
+- Buildings near address tags
+- Buildings overlapping with `highway=*` or `railway=*`
+
+Let's look at some common cases you might encounter. Remember, you will want to upload the most accurate version of buildings/addresses that can be observed in these data sources. In short, you need to decide
+which buildings are of better quality or whether to include an address or not.
+The next section reviews the tools we recommend for this import and highlight some cases. **Remember** that you can alway tell which building is from the import set by checking for `ref:miabldg` tag.
+
+#### Overlapping buildings
+
+- If the import building is of higher quality, select both buildings and click on **More tools -> Replace Geometry**. Here you can decide which tags to keep and which ones to discard. This step will preserve the history of the building (i.e. the one that was already in OSM) with the new geometry. Make sure you don't keep tags like `source=Bing` accidentally.
+
+![replace geometry](img/replace_geometry.jpg)
+
+- If the existing OSM building is of higher quality, you can just ignore the import building. However, make sure you copy the building height information as that is potentially useful along with the `ref:miabldg` tag. You can do it by selecting the desired tags on the import building, hitting **`ctrl`** + **`c`** (or right click `Copy selected Key(s)/Value(s)`), then selecting the other building and pressing **`ctrl`** + **`shift`** + **`v`**. Delete the import building by selecting it and pressing **`delete`**
+
+![copy building attribute from import building](img/copy_bldg_attr.jpg)
+
+Another useful tool comes with the **Auto tools** plugin. This tool combines the geometry and tags
+
+[TODO]
+
+#### Importing addresses
+
+Addresses in the manual set are represented as nodes (i.e. not automatically attached to buildings). This is because you for some cases you can see multiple addresses for a single building.
+
+- If you think that an address is unique to the underlying building, you can copy all the tags and paste it in the building. It is done by selecting the address node, selecting the tags and copying them by hitting **`ctrl`** + **`c`** or pressing right click +  `Copy selected Key(s)/Value(s)`. Paste the address tags to the building by hitting **`ctrl`** + **`shift`** + **`v`**. Finally delete the address node by selecting it and pressing **`delete`**.
+
+...
