@@ -99,14 +99,56 @@ The next section reviews the tools we recommend for this import and highlight so
 
 ![copy building attribute from import building](img/copy_bldg_attr.jpg)
 
-Another useful tool comes with the **Auto tools** plugin. This tool combines the geometry and tags
+- Another useful tool comes with the **Auto tools** plugin. This tool combines the geometry and tags from two buildings (import an existing). It's useful when you can't decide if the existing building or the import building is better. Select both buildings, click on *`Auto Tools`* -> *`Combine LA buildings`*. Now you can edit the combined building (e.g. delete some nodes, change its shape, etc.). Don forget to check all tags + Pay attention to addresses (described below).
 
-[TODO]
+![auto tools plugin](img/auto_tools.jpg)
+
+- The import dataset can be outdated. However, underlying high resolution `Bing` imagery (i.e. when zoomed in) tends to be more recent (2014-2015 for most part of the county). A tool to check imagery dates is found [here](http://mvexel.dev.openstreetmap.org/bing/).
+- If you find buildings that are missing from both OSM and from the import set, you can add them based on `Bing`. In these cases, add a `source=Bing` and `note=not imported` tag to each of the buildings.
+- If a building was demolished in the meantime (e.g. the buildings's not seen or you know it's been taken down), just delete them. 
 
 #### Importing addresses
 
 Addresses in the manual set are represented as nodes (i.e. not automatically attached to buildings). This is because you for some cases you can see multiple addresses for a single building.
 
 - If you think that an address is unique to the underlying building, you can copy all the tags and paste it in the building. It is done by selecting the address node, selecting the tags and copying them by hitting **`ctrl`** + **`c`** or pressing right click +  `Copy selected Key(s)/Value(s)`. Paste the address tags to the building by hitting **`ctrl`** + **`shift`** + **`v`**. Finally delete the address node by selecting it and pressing **`delete`**.
+- In some cases, you will see multiple address nodes overlaying a buildings. Best is to evaluate them one by one to decide whether you want to upload them or not. Visint the area helps. Also, look for existing address nodes (e.g. a shop, restaurant) nearby and match the addresses. In general, only upload addresses if you're absolutely certain about their reliability. The screenshot below shows a scenario on Lincoln Road. Here, the Starbucks at the lower left corner of the builing has the same street address as one of the nodes on the northern side of the building. Without verifying it on the fild, it's best not to upload these addresses at all and leave what was already in OSM intact. Rely on common sense when evaluating these cases.
 
-...
+![building multiple address](img/building_multiple_address.jpg)
+
+### Reviewing before uploading
+
+- Take another breath and review your area once more before uploading
+- Eximine tags on buildings you've modified.
+- If there are any conflicts you can't solve, don't sweat on it. Add a comment on the Tasking Manager task, open a GitHub issue, add an OSM note, ask for help on [Facebook](https://www.facebook.com/groups/1673617022962900/). Don't forget to click on `Stop mapping` so the task will be unlocked.
+
+![comment on tasking manager](img/comment_tasking_manager.jpg)
+
+- Finally, upload your changes by clicking on *`File`* -> *`Upload data`*.
+- The validator will yield again for potential conflicts. Take one step back and fix them, if any.
+
+![validation result](img/validation_results.jpg)
+
+- Use the changeset comment `#miabuildings Miami Building Import 2016`. Set the source tag to `Miami-Dade County GIS Open Data, http://gis.mdc.opendata.arcgis.com`.
+ 
+![changeset settings](img/changeset_settings.jpg)
+
+- **Remember to use your `_import` account!
+- Mark the task as done in the `Tasking manager`.
+
+### Additional resources
+
+We're mapping, so we'd like OSM to be as accurate as it can. It should only contain buildings that exists in real life. Rely on your local knowledge if you're familiar with the area and check several sources that can help.
+
+- Use several sources of background imagery.
+- Check [Mapillary](www.mapillary.com)'s coverage. (You can use the `Mapillary Plugin` in JOSM).
+- Go out and check it on the field.
+- **DO NOT USE GOOGLE MAPS OR GOOGLE STREET VIEW TO EDIT OSM!**
+
+### Getting help.
+
+- Create an issue on this [GitHub](http://github.com/jlevente/MiamiOSM-buildings/issues) repository.
+- Add comments on your `Tasking Manager` task.
+- Use the [OpenStreetMap South Florida](https://www.facebook.com/groups/1673617022962900/) Facebook group.
+- Join the conversation on Code for Miami's Slack (#osm-bulk-import channel). (Autoinvite yourself to Slack [here](cfm-invite.herokuapp.com), and log in [here][http://codeformiami.slack.com).
+- Tweet with #miamibuildings hashtag or ask [@MaptimeMIA](https://twitter.com/maptimemia).
