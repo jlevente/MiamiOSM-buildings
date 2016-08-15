@@ -133,7 +133,7 @@ Addresses in the manual set are represented as nodes (i.e. not automatically att
  
 ![changeset settings](img/changeset_settings.jpg)
 
-- **Remember to use your `_import` account!
+- **Remember to use your `_import` account!**
 - Mark the task as done in the `Tasking manager`.
 
 ### Additional resources
