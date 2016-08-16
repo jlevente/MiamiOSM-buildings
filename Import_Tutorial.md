@@ -16,14 +16,14 @@ Before jumping into map editing, here are some info we'd like you to read.
 
 ### Creating an import account
 
-First off, since data imports can be significantly different from what people would otherwise map, the common consensus requres you to create a dedicated import account,
+First off, since data imports can be significantly different from what people would otherwise map, the common consensus requires you to create a dedicated import account,
 so other people will instantly know that the data you insterted is from another source. Creating an import account also helps us monitor the progress.
-The best is putting `_imports` (or `_miamibuildings`, etc.) after your existing OSM username (e.g. `jlevente_imports`).
+The best is putting `_imports` (or `_miamibuildings`, etc.) after your existing OSM username (e.g. `jlevente_imports`). You can create your new account on the main [OpenStreetMap](http://www.openstreetmap.org/) site.
 
 
 ### Getting familiar with OSM
 
-If you are not familiar with OpenStreetMap and the JOSM editor, please check out these guides first and make sure you have a basic understanding of mapping.
+If you are not familiar with **OpenStreetMap** and the **JOSM editor**, please check out these guides first and make sure you have a basic understanding of mapping.
 To contribute to this project, you need to use the JOSM editor. Here are some resources to get you started:
 
 - Download JOSM - https://josm.openstreetmap.de/wiki/Download
@@ -71,14 +71,12 @@ Open JOSM and activate Remote Control at **Edit -> Prefernces -> Remote Control*
 ### Combining data layers
 
 - Run the Validator and check for potential conflicts in each layer. Try to solve them.
-- Select both layers in JOSM and merge them via **Right click -> Merge**. Target layer should be **`mia_building_####.osm`**. This step combines the 2 layers. You have to be very careful from this step on as now you have overlapping buildings.
-- Buildings in the import set will always have `ref:miabld` (and `ref:miaaddr` for addresses) tags. You can use these to decide the original source of an OSM feature)
+- Select both layers in JOSM and merge them via **`Right click`** -> **`Merge`**. Target layer should be **`mia_building_####.osm`**. This step combines the 2 layers. You have to be very careful from this step on as now you have overlapping buildings.
+- Buildings in the import set will always have `ref:miabld` (and `ref:miaaddr` for addresses) tags. You can use these to decide the origin of a building)
 
 ### Manually checking buildings
 
 There are different scenarios you will want to look for. Keep in mind that you are working with buildings with potential conflicts. These conflicts can be the following:
-
-**Remember** that you can alway tell which building is from the import set by checking for `ref:miabldg` tag.
 
 - Buildings overlapping with existing OSM buildings
 - Buildings with geometry errors
@@ -103,28 +101,31 @@ The next section reviews the tools we recommend for this import and highlight so
 
 ![auto tools plugin](img/auto_tools.jpg)
 
-- The import dataset can be outdated. However, underlying high resolution `Bing` imagery (i.e. when zoomed in) tends to be more recent (2014-2015 for most part of the county). A tool to check imagery dates is found [here](http://mvexel.dev.openstreetmap.org/bing/).
+- The import dataset can be outdated. However, the background high resolution `Bing` imagery (i.e. when zoomed in) tends to be more recent (2014-2015 for most part of the county). A tool to check imagery dates is found [here](http://mvexel.dev.openstreetmap.org/bing/).
 - If you find buildings that are missing from both OSM and from the import set, you can add them based on `Bing`. In these cases, add a `source=Bing` and `note=not imported` tag to each of the buildings.
-- If a building was demolished in the meantime (e.g. the buildings's not seen or you know it's been taken down), just delete them. 
+- If a building was demolished in the meantime (e.g. the buildings's not seen or you know it's been taken down), just delete them.
+- +1: You don't have to upload buildings as they are. Try to upload the most accurate representation of the buildings, for example by addig more details to their geometry, or by dragging them slightly into their true position.
 
 #### Importing addresses
 
 Addresses in the manual set are represented as nodes (i.e. not automatically attached to buildings). This is because you for some cases you can see multiple addresses for a single building.
 
 - If you think that an address is unique to the underlying building, you can copy all the tags and paste it in the building. It is done by selecting the address node, selecting the tags and copying them by hitting **`ctrl`** + **`c`** or pressing right click +  `Copy selected Key(s)/Value(s)`. Paste the address tags to the building by hitting **`ctrl`** + **`shift`** + **`v`**. Finally delete the address node by selecting it and pressing **`delete`**.
-- In some cases, you will see multiple address nodes overlaying a buildings. Best is to evaluate them one by one to decide whether you want to upload them or not. Visint the area helps. Also, look for existing address nodes (e.g. a shop, restaurant) nearby and match the addresses. In general, only upload addresses if you're absolutely certain about their reliability. The screenshot below shows a scenario on Lincoln Road. Here, the Starbucks at the lower left corner of the builing has the same street address as one of the nodes on the northern side of the building. Without verifying it on the fild, it's best not to upload these addresses at all and leave what was already in OSM intact. Rely on common sense when evaluating these cases.
+- In some cases, you will see multiple address nodes on top of buildings. Best practice is to evaluate them one by one to decide whether you want to upload them or not. Visiting the area helps. Also, look for existing address nodes (e.g. a shop, restaurant) nearby and match the addresses. In general, only upload addresses if you're absolutely certain about their reliability. The screenshot below shows a scenario on Lincoln Road. Here, the Starbucks at the lower left corner of the building has the same street address as one of the nodes on the northern side of the building. Without verifying it on the field, it's best not to upload these addresses at all and leave what was already in OSM intact. Rely on common sense when evaluating these cases.
 
 ![building multiple address](img/building_multiple_address.jpg)
 
 ### Reviewing before uploading
 
-- Take another breath and review your area once more before uploading
-- Eximine tags on buildings you've modified.
-- If there are any conflicts you can't solve, don't sweat on it. Add a comment on the Tasking Manager task, open a GitHub issue, add an OSM note, ask for help on [Facebook](https://www.facebook.com/groups/1673617022962900/). Don't forget to click on `Stop mapping` so the task will be unlocked.
+- Take another breath and review your area visually once more before uploading. Look for overlapping buildings, and obvious mistakes.
+- Eximine tags on buildings you've modified. Are they all correct?
+- If there are any conflicts you can't solve, don't sweat on it. Just add a comment on the Tasking Manager task, open a GitHub issue, add an OSM note, ask for help on [Facebook](https://www.facebook.com/groups/1673617022962900/).
+- You can always leave the area for a more experienced mapper (or come back later once you've acquired enough help).
+- In general, just hit `Stop mapping` whenever you're done editing. This will unlock the area and others can start working on it.
 
 ![comment on tasking manager](img/comment_tasking_manager.jpg)
 
-- Finally, upload your changes by clicking on *`File`* -> *`Upload data`*.
+- Finally, upload your changes by clicking on **`File`** -> **`Upload data`**.
 - The validator will yield again for potential conflicts. Take one step back and fix them, if any.
 
 ![validation result](img/validation_results.jpg)
@@ -138,7 +139,7 @@ Addresses in the manual set are represented as nodes (i.e. not automatically att
 
 ### Additional resources
 
-We're mapping, so we'd like OSM to be as accurate as it can. It should only contain buildings that exists in real life. Rely on your local knowledge if you're familiar with the area and check several sources that can help.
+We're mapping and maps are the representation or real life. We'd like OSM to be as accurate as it can. It should only contain buildings that exists in real life. Rely on your local knowledge if you're familiar with the area and check several sources that can help.
 
 - Use several sources of background imagery.
 - Check [Mapillary](www.mapillary.com)'s coverage. (You can use the `Mapillary Plugin` in JOSM).
