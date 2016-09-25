@@ -56,12 +56,13 @@ Open JOSM and activate Remote Control at **Edit -> Prefernces -> Remote Control*
 
 - Navigate to http://tasks.osm.jlevente.com and choose an area to work on.
 - Click on **Start Mapping** (Now the task is locked and others know you're working on it)
+- Make sure JOSM application on your computer is running.
 - Download current OSM data by selecting **Edit in JOSM** (JOSM needs to be running) This will create a layer called `Data Layer 1` in JOSM
 - Download the `*.osm` file specific to your task under the **Extra Instrucitons**. These are the buildings from our import set. A second layer called `mia_buildings_####.osm` will appear in JOSM.
 ![select task](img/select_task.jpg)
 ![edit with josm](img/edit_with_josm.jpg)
 
-- Click on **Imagery** and load a background layer. You can use **Bing** or **USGS Large Scale Imagery** that are both of decent quality.
+- Click on the **Imagery** menu and load a background layer. You can use **Bing** or **USGS Large Scale Imagery** that are both of decent quality.
 - Your JOSM should look similar to this, with at least 2 data layers. `Data Layer 1` holds the current OSM data (greyed out if not Active) and `mia_building_####.osm` with the buildings to be reviewed.
 
 ![josm_sample](img/layers_in_josm.jpg)
@@ -70,7 +71,7 @@ Open JOSM and activate Remote Control at **Edit -> Prefernces -> Remote Control*
 
 ### Combining data layers
 
-- Run the Validator and check for potential conflicts in each layer. Try to solve them.
+- Run the Validator (in the Validation Results window) and check for potential conflicts in each layer. Try to solve them.
 - Select both layers in JOSM and merge them via **`Right click`** -> **`Merge`**. Target layer should be **`mia_building_####.osm`**. This step combines the 2 layers. You have to be very careful from this step on as now you have overlapping buildings.
 - Buildings in the import set will always have `ref:miabld` (and `ref:miaaddr` for addresses) tags. You can use these to decide the origin of a building)
 
