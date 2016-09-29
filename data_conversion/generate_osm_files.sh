@@ -46,7 +46,7 @@ if [ "$1" == 'review' ]; then
     translation="mia_building_trans.py"
 
     # Get buildings
-    sql="SELECT b.height, b.objectid, b.geom from buildings_overlap b, block_groups_2010 block where st_within(b.geom, block.geom) and block.objectid=$objectid"
+    sql="SELECT b.height, b.objectid, b.geom from buildings_overlap b, block_groups_2010 block where st_within(b.geom, block.geom) and block.ogc_fid=$objectid"
     python $ogr2osm_dir/ogr2osm.py "$dsn" -t $translation -f -o $out_folder"/"$output_name --sql "$sql" --id="-1"
 
     # Get address
@@ -54,7 +54,7 @@ if [ "$1" == 'review' ]; then
     output_name=$objectid"_address.osm"
     sql="SELECT a.objectid, zip, mailing_mu as city, pre_dir, st_name, st_type, suf_dir, hse_num as house_num, a.geom from address a,
       (SELECT b.geom from buildings_overlap b, block_groups_2010 block where
-      st_within(b.geom,block.geom) and block.objectid=$objectid) x where st_within(a.geom, x.geom)"
+      st_within(b.geom,block.geom) and block.ogc_fid=$objectid) x where st_within(a.geom, x.geom)"
     python $ogr2osm_dir/ogr2osm.py "$dsn" -t $translation -f -o $out_folder"/"$output_name --sql "$sql" --id="-20001"
 
     # Fake version, timestamps
