@@ -103,7 +103,7 @@ The next section reviews the tools we recommend for this import and highlight so
 ![auto tools plugin](img/auto_tools.jpg)
 
 - The import dataset can be outdated. However, the background high resolution `Bing` imagery (i.e. when zoomed in) tends to be more recent (2014-2015 for most part of the county). A tool to check imagery dates is found [here](http://mvexel.dev.openstreetmap.org/bing/).
-- If you find buildings that are missing from both OSM and from the import set, you can add them based on `Bing`. In these cases, add a `source=Bing` and `note=not imported` tag to each of the buildings.
+- If you find buildings that are missing from both OSM and from the import set, you can add them based on `Bing`. In these cases, add a `source=Bing` tag to each of the buildings (or any other imagery/local knowledge).
 - If a building was demolished in the meantime (e.g. the buildings's not seen or you know it's been taken down), just delete them.
 - +1: You don't have to upload buildings as they are. Try to upload the most accurate representation of the buildings, for example by addig more details to their geometry, or by dragging them slightly into their true position.
 
