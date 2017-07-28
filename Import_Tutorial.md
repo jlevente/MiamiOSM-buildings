@@ -131,7 +131,7 @@ Addresses in the manual set are represented as nodes (i.e. not automatically att
 
 ![validation result](img/validation_results.jpg)
 
-- Use the changeset comment `#miabuildings Miami Building Import 2016`. Set the source tag to `Miami-Dade County GIS Open Data, http://gis.mdc.opendata.arcgis.com`.
+- Use the changeset comment `#miabuildings Miami Building Import 2017`. Set the source tag to `Miami-Dade County GIS Open Data, http://gis.mdc.opendata.arcgis.com`.
  
 ![changeset settings](img/changeset_settings.jpg)
 
